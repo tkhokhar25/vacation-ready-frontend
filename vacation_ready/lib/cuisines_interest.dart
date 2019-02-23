@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 enum GridDemoTileStyle {
-  imageOnly,
-  oneLine,
   twoLine
 }
 
@@ -32,7 +31,7 @@ class Photo {
   bool isFavorite;
   String get tag => assetName; // Assuming that all asset names are unique.
 
-  bool get isValid => assetName != null && title != null && caption != null && isFavorite != null;
+  bool get isValid => assetName != null && title != null && isFavorite != null;
 }
 
 class GridPhotoViewer extends StatefulWidget {
@@ -147,9 +146,15 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
     );
   }
 }
+class OptionTiles extends StatefulWidget {
+  final Photo photo;
+  final GridDemoTileStyle tileStyle;
+  final BannerTapCallback onBannerTap; // User
+  double myBorderRadius = 10.0;
+  double myBorderWidth = 0.0;
+  double isSelected = 0.7;
 
-class GridDemoPhotoItem extends StatelessWidget {
-  GridDemoPhotoItem({
+  OptionTiles({
     Key key,
     @required this.photo,
     @required this.tileStyle,
@@ -159,83 +164,59 @@ class GridDemoPhotoItem extends StatelessWidget {
        assert(onBannerTap != null),
        super(key: key);
 
-  final Photo photo;
-  final GridDemoTileStyle tileStyle;
-  final BannerTapCallback onBannerTap; // User taps on the photo's header or footer.
+  @override
+  _OptionTilesState createState() => new _OptionTilesState();
+}
 
-  void showPhoto(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(photo.title)
-          ),
-          body: SizedBox.expand(
-            child: Hero(
-              tag: photo.tag,
-              child: GridPhotoViewer(photo: photo),
-            ),
-          ),
-        );
-      }
-    ));
-  }
 
+class _OptionTilesState extends State<OptionTiles> {
   @override
   Widget build(BuildContext context) {
     final Widget image = GestureDetector(
-      onTap: () { showPhoto(context); },
       child: Hero(
-        key: Key(photo.assetName),
-        tag: photo.tag,
+        key: Key(widget.photo.assetName),
+        tag: widget.photo.tag,
         child: Image.asset(
-          photo.assetName,
-          package: photo.assetPackage,
+          widget.photo.assetName,
+          package: widget.photo.assetPackage,
           fit: BoxFit.cover,
         )
       )
     );
 
-    final IconData icon = photo.isFavorite ? Icons.star : Icons.star_border;
-
-    switch (tileStyle) {
-      case GridDemoTileStyle.imageOnly:
-        return image;
-
-      case GridDemoTileStyle.oneLine:
-        return GridTile(
-          header: GestureDetector(
-            onTap: () { onBannerTap(photo); },
-            child: GridTileBar(
-              title: _GridTitleText(photo.title),
-              backgroundColor: Colors.black45,
-              leading: Icon(
-                icon,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          child: image,
-        );
-
+    switch (widget.tileStyle) {
       case GridDemoTileStyle.twoLine:
         return GridTile(
           footer: GestureDetector(
-            onTap: () { onBannerTap(photo); },
             child: GridTileBar(
-              backgroundColor: Colors.black45,
-              title: _GridTitleText(photo.title),
-              subtitle: _GridTitleText(photo.caption),
-              trailing: Icon(
-                icon,
-                color: Colors.white,
-              ),
+              title: _GridTitleText(widget.photo.title),
             ),
           ),
-          child: image,
-        );
+          child: GestureDetector(
+            child: Container(
+              child: new ClipRRect(
+              borderRadius: new BorderRadius.circular(widget.myBorderRadius),
+              child: Opacity(
+                opacity: widget.isSelected,
+                child: image,
+              ) 
+              ),
+              // decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(89, 208, 255, 1.0), width: widget.myBorderWidth), 
+              //                           borderRadius: BorderRadius.circular(widget.myBorderRadius)),
+            ),
+            onTap: () {
+              setState(() {
+                  if (widget.isSelected == 0.7){
+                    widget.isSelected = 1.0;
+                  }else {
+                    widget.isSelected = 0.7;
+                  }
+              });      
+            },
+          )
+          );
     }
-    assert(tileStyle != null);
+    assert(widget.tileStyle != null);
     return null;
   }
 }
@@ -257,73 +238,61 @@ class GridListDemoState extends State<GridListDemo> {
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Chennai',
-      caption: 'Flower Market',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Tanjore',
-      caption: 'Bronze Works',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Tanjore',
-      caption: 'Market',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Tanjore',
-      caption: 'Thanjavur Temple',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Tanjore',
-      caption: 'Thanjavur Temple',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Pondicherry',
-      caption: 'Salt Farm',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Chennai',
-      caption: 'Scooters',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Chettinad',
-      caption: 'Silk Maker',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Chettinad',
-      caption: 'Lunch Prep',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Tanjore',
-      caption: 'Market',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Pondicherry',
-      caption: 'Beach',
     ),
     Photo(
       assetName: 'chinese.jpg',
       assetPackage: _kGalleryAssetsPackage,
       title: 'Pondicherry',
-      caption: 'Fisherman',
     ),
   ];
 
@@ -337,48 +306,37 @@ class GridListDemoState extends State<GridListDemo> {
   Widget build(BuildContext context) {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Grid list'),
-        actions: <Widget>[
-  //        MaterialDemoDocumentationButton(GridListDemo.routeName),
-          PopupMenuButton<GridDemoTileStyle>(
-            onSelected: changeTileStyle,
-            itemBuilder: (BuildContext context) => <PopupMenuItem<GridDemoTileStyle>>[
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.imageOnly,
-                child: Text('Image only'),
-              ),
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.oneLine,
-                child: Text('One line'),
-              ),
-              const PopupMenuItem<GridDemoTileStyle>(
-                value: GridDemoTileStyle.twoLine,
-                child: Text('Two line'),
-              ),
-            ],
-          ),
-        ],
-      ),
       body: Column(
         children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 55.0,left: 20.0,bottom: 15.0), 
+            child: Opacity(
+              opacity: 1.0,
+              child: Text(
+              'What are your favorite cuisines ?',
+              textAlign: TextAlign.left,
+              style:TextStyle(fontFamily: 'Montserrat', fontSize: 26),
+              )
+            )   
+          ),
+
           Expanded(
             child: SafeArea(
               top: false,
               bottom: false,
               child: GridView.count(
-                crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-                padding: const EdgeInsets.all(4.0),
+                crossAxisCount: (orientation == Orientation.portrait) ? 3 : 3,
+                mainAxisSpacing: 20.0,
+                crossAxisSpacing: 20.0,
+                padding: const EdgeInsets.all(20.0),
                 childAspectRatio: (orientation == Orientation.portrait) ? 1.0 : 1.3,
                 children: photos.map<Widget>((Photo photo) {
-                  return GridDemoPhotoItem(
+                  return OptionTiles(                  
                     photo: photo,
                     tileStyle: _tileStyle,
                     onBannerTap: (Photo photo) {
                       setState(() {
-                        photo.isFavorite = !photo.isFavorite;
+
                       });
                     }
                   );
