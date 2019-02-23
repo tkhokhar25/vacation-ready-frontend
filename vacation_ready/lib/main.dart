@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'cuisines_interest.dart';
 import 'attractions_interest.dart';
+import './pages/splash_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    new App()
+  );
+}
 
-class MyApp extends StatelessWidget {
+// A stateless widget to control routes in the application
+class App extends StatelessWidget {
+
   @override
-  Widget build(BuildContext ctxt) {
+  Widget build(BuildContext context) {
     return new MaterialApp(
+      home: new MySplashScreen(),
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: new GridListDemo(),
+      routes: <String, WidgetBuilder> {
+        // Add all routes here
+          '/grid-list' : (BuildContext context) => new GridListDemo()
+      }
     );
   }
 }
