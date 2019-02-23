@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'cuisines_interest.dart';
+import 'attractions_interest.dart';
 import './pages/splash_screen.dart';
 
-
-// Main controller to run 4ceed_app
 void main() {
   runApp(
     new App()
@@ -16,9 +16,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new MySplashScreen(),
+      theme: ThemeData(fontFamily: 'Roboto'),
       routes: <String, WidgetBuilder> {
         // Add all routes here
-        
+          '/grid-list' : (BuildContext context) => new GridListDemo()
       }
     );
   }
