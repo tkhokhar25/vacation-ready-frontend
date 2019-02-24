@@ -5,6 +5,12 @@ List<String> favoriteCuisines = [];
 List<String> favoriteAttractions = [];
 int selectCount = 0;
 
+
+double sliderMealNum = 3;
+double sliderMealBudget = 10;
+double sliderOverallBudget = 500;
+double sliderNumPeople = 3;
+
 /* {
    "num_meals":5,
    “average_meal_budget”: 1000,
@@ -23,9 +29,9 @@ int selectCount = 0;
 
 class Request {
   int num_meals = 0;
-  double average_meal_budget = 0.0;
+  int average_meal_budget = 0;
   List cuisines = [];
-  double average_attraction_budget = 0.0;
+  int average_attraction_budget = 0;
   List attractions = [];
   int user_id = -1;
 

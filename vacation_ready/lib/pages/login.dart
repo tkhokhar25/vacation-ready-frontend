@@ -18,6 +18,7 @@ class SignIn extends StatefulWidget {
 }
 
 class SignInState extends State<SignIn> {
+  int cnt = 0;
   GoogleSignInAccount _currentUser;
   String emailText = "", passwordText = "";
   bool isValid = false;
@@ -40,6 +41,9 @@ class SignInState extends State<SignIn> {
 
   Future<Null> _handleSignIn() async {
     try {
+      setState(() {
+              cnt += 1;
+            });
       await _googleSignIn.signIn();
       userName = _currentUser.displayName;
       email = _currentUser.email;
@@ -61,7 +65,7 @@ class SignInState extends State<SignIn> {
 
     
     // if logged in, take the user to the home page
-    if (_currentUser != null) {
+    if (cnt >= 1) {
       return new CreateTrip();
     } else {
       return Scaffold(

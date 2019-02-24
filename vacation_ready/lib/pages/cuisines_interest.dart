@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import '../utilities/attractions_user_data.dart';
+import '../utilities/drawer.dart';
 
-enum GridDemoTileStyle {
-  twoLine
-}
+enum GridDemoTileStyle { twoLine }
 
 typedef BannerTapCallback = void Function(Photo photo);
 
@@ -32,7 +31,7 @@ class Photo {
 }
 
 class GridPhotoViewer extends StatefulWidget {
-  const GridPhotoViewer({ Key key, this.photo }) : super(key: key);
+  const GridPhotoViewer({Key key, this.photo}) : super(key: key);
 
   final Photo photo;
 
@@ -50,12 +49,18 @@ class _GridTitleText extends StatelessWidget {
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
-      child: Text(text, style: TextStyle(fontSize: 18, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), color: Colors.black,blurRadius: 3.0)]),),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 18, shadows: <Shadow>[
+          Shadow(offset: Offset(1.0, 1.0), color: Colors.black, blurRadius: 3.0)
+        ]),
+      ),
     );
   }
 }
 
-class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProviderStateMixin {
+class _GridPhotoViewerState extends State<GridPhotoViewer>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation<Offset> _flingAnimation;
   Offset _offset = Offset.zero;
@@ -81,7 +86,8 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
   Offset _clampOffset(Offset offset) {
     final Size size = context.size;
     final Offset minOffset = Offset(size.width, size.height) * (1.0 - _scale);
-    return Offset(offset.dx.clamp(minOffset.dx, 0.0), offset.dy.clamp(minOffset.dy, 0.0));
+    return Offset(
+        offset.dx.clamp(minOffset.dx, 0.0), offset.dy.clamp(minOffset.dy, 0.0));
   }
 
   void _handleFlingAnimation() {
@@ -109,14 +115,11 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
 
   void _handleOnScaleEnd(ScaleEndDetails details) {
     final double magnitude = details.velocity.pixelsPerSecond.distance;
-    if (magnitude < _kMinFlingVelocity)
-      return;
+    if (magnitude < _kMinFlingVelocity) return;
     final Offset direction = details.velocity.pixelsPerSecond / magnitude;
     final double distance = (Offset.zero & context.size).shortestSide;
     _flingAnimation = _controller.drive(Tween<Offset>(
-      begin: _offset,
-      end: _clampOffset(_offset + direction * distance)
-    ));
+        begin: _offset, end: _clampOffset(_offset + direction * distance)));
     _controller
       ..value = 0.0
       ..fling(velocity: magnitude / 1000.0);
@@ -143,6 +146,7 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
     );
   }
 }
+
 class OptionTiles extends StatefulWidget {
   final Photo photo;
   final GridDemoTileStyle tileStyle;
@@ -151,75 +155,71 @@ class OptionTiles extends StatefulWidget {
   double myBorderWidth = 0.0;
   double isSelected = 0.6;
 
-  OptionTiles({
-    Key key,
-    @required this.photo,
-    @required this.tileStyle,
-    @required this.onBannerTap
-  }) : assert(photo != null && photo.isValid),
-       assert(tileStyle != null),
-       assert(onBannerTap != null),
-       super(key: key);
+  OptionTiles(
+      {Key key,
+      @required this.photo,
+      @required this.tileStyle,
+      @required this.onBannerTap})
+      : assert(photo != null && photo.isValid),
+        assert(tileStyle != null),
+        assert(onBannerTap != null),
+        super(key: key);
 
   @override
   _OptionTilesState createState() => new _OptionTilesState();
 }
 
-
 class _OptionTilesState extends State<OptionTiles> {
   @override
   Widget build(BuildContext context) {
     final Widget image = GestureDetector(
-      child: Hero(
-        key: Key(widget.photo.title),
-        tag: widget.photo.title,
-        child: Image.asset(
-          widget.photo.assetName,
-          package: widget.photo.assetPackage,
-          fit: BoxFit.cover,
-        )
-      )
-    );
+        child: Hero(
+            key: Key(widget.photo.title),
+            tag: widget.photo.title,
+            child: Image.asset(
+              widget.photo.assetName,
+              package: widget.photo.assetPackage,
+              fit: BoxFit.cover,
+            )));
 
     switch (widget.tileStyle) {
       case GridDemoTileStyle.twoLine:
-        if (favoriteCuisines.contains(widget.photo.title)){
+        if (favoriteCuisines.contains(widget.photo.title)) {
           print("exists");
           widget.isSelected = 1.0;
         }
         return GridTile(
-          footer: GestureDetector(
-            child: GridTileBar(
-              title: _GridTitleText(widget.photo.title),
-            ),
-          ),
-          child: GestureDetector(
-            child: Container(
-              child: new ClipRRect(
-              borderRadius: new BorderRadius.circular(widget.myBorderRadius),
-              child: Opacity(
-                opacity: widget.isSelected,
-                child: image,
-              ) 
+            footer: GestureDetector(
+              child: GridTileBar(
+                title: _GridTitleText(widget.photo.title),
               ),
             ),
-            onTap: () {
-              setState(() {
-                  if (widget.isSelected == 0.6){
+            child: GestureDetector(
+              child: Container(
+                child: new ClipRRect(
+                    borderRadius:
+                        new BorderRadius.circular(widget.myBorderRadius),
+                    child: Opacity(
+                      opacity: widget.isSelected,
+                      child: image,
+                    )),
+              ),
+              onTap: () {
+                setState(() {
+                  if (widget.isSelected == 0.6) {
                     widget.isSelected = 1.0;
                     selectCount += 1;
                     favoriteCuisines.add(widget.photo.title);
                     print(favoriteCuisines.length);
-                  }else {
+                  } else {
                     widget.isSelected = 0.6;
                     selectCount -= 1;
                     favoriteCuisines.remove(widget.photo.title);
                     print(favoriteCuisines.length);
                   }
-              });      
-            },
-          )
-          );
+                });
+              },
+            ));
     }
     assert(widget.tileStyle != null);
     return null;
@@ -229,7 +229,7 @@ class _OptionTilesState extends State<OptionTiles> {
 class CuisineInterest extends StatefulWidget {
   static int selectCount = 0;
   static List<String> favoriteCuisines = [];
-  const CuisineInterest({ Key key }) : super(key: key);
+  const CuisineInterest({Key key}) : super(key: key);
   static const String routeName = 'interest-create';
 
   @override
@@ -309,7 +309,7 @@ class CuisineInterestState extends State<CuisineInterest> {
   }
 
   void changePage(BuildContext context) {
-    if (selectCount == 0){
+    if (selectCount == 0) {
       return;
     }
     Navigator.of(context).pushNamed('/attractions_select');
@@ -319,40 +319,44 @@ class CuisineInterestState extends State<CuisineInterest> {
   Widget build(BuildContext context) {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
+      drawer: new MyDrawer(),
+      appBar: new AppBar(
+          title: new Text("vacation ready"),
+          backgroundColor: Color.fromRGBO(101, 202, 214, 1.0)),
       body: Column(
         children: <Widget>[
-           
           Row(
               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.only(top: 55.0, left: 20.0, bottom: 15.0),
+                    padding:
+                        EdgeInsets.only(top: 30.0, left: 20.0, bottom: 15.0),
                     child: Opacity(
-                      opacity: 1.0,
-                      child: Text(
-                      'What are your favorite cuisines ?',
-                      textAlign: TextAlign.left,
-                      style:TextStyle(fontFamily: 'Montserrat', fontSize: 26),
-                      )
-                    ),
+                        opacity: 1.0,
+                        child: Text(
+                          'What are your favorite cuisines ?',
+                          textAlign: TextAlign.left,
+                          style:
+                              TextStyle(fontFamily: 'Montserrat', fontSize: 26),
+                        )),
                   ),
                 ),
-
                 Container(
                   child: FlatButton(
-                    child: Text("next", style: TextStyle(fontFamily: 'Montserrat-Black'),),
-                    onPressed: (){
-                      changePage(context);
-                    },  
-                    color: Color.fromRGBO(211, 211, 211, 1.0),
-                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0))
-                  ),
+                      child: Text(
+                        "next",
+                        style: TextStyle(fontFamily: 'Montserrat-Black'),
+                      ),
+                      onPressed: () {
+                        changePage(context);
+                      },
+                      color: Color.fromRGBO(211, 211, 211, 1.0),
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0))),
                   padding: EdgeInsets.only(right: 20.0, left: 10.0, top: 30.0),
                 )
-              ]
-          ),
-
+              ]),
           Expanded(
             child: SafeArea(
               top: false,
@@ -362,17 +366,15 @@ class CuisineInterestState extends State<CuisineInterest> {
                 mainAxisSpacing: 20.0,
                 crossAxisSpacing: 20.0,
                 padding: const EdgeInsets.all(20.0),
-                childAspectRatio: (orientation == Orientation.portrait) ? 1.0 : 1.3,
+                childAspectRatio:
+                    (orientation == Orientation.portrait) ? 1.0 : 1.3,
                 children: photos.map<Widget>((Photo photo) {
-                  return OptionTiles(                  
-                    photo: photo,
-                    tileStyle: _tileStyle,
-                    onBannerTap: (Photo photo) {
-                      setState(() {
-                        
+                  return OptionTiles(
+                      photo: photo,
+                      tileStyle: _tileStyle,
+                      onBannerTap: (Photo photo) {
+                        setState(() {});
                       });
-                    }
-                  );
                 }).toList(),
               ),
             ),

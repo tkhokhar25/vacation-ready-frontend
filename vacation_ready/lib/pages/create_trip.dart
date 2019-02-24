@@ -22,7 +22,7 @@ class _CreateTripBodyState extends State<CreateTripBody> {
         drawer: new MyDrawer(),
         appBar: new AppBar(
           title: new Text("vacation ready"),
-          backgroundColor: Colors.blue[300],
+          backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
         ),
         body: new Container(
           margin: const EdgeInsets.only(left: 15.0, right: 15.0),
@@ -30,7 +30,7 @@ class _CreateTripBodyState extends State<CreateTripBody> {
             new Padding(padding: EdgeInsets.only(top: 30.0)),
             new Card(
               
-                color: Colors.blue[100],
+                color: Color.fromRGBO(162, 228, 236, 1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -58,7 +58,7 @@ class _CreateTripBodyState extends State<CreateTripBody> {
                 ]))),
             new Padding(padding: EdgeInsets.only(bottom: 30.0)),
             new Card(
-                color: Colors.blue[100],
+                color: Color.fromRGBO(162, 228, 236, 1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
