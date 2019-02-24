@@ -22,6 +22,10 @@ dependencies:
   google_sign_in: ^4.0.1+1
   splashscreen: ^1.1.0
   http: ^0.12.0
+  material_search: ^0.2.7
+  open_file: ^1.0.7
+  image_picker: ^0.4.6
+  path_provider: ^0.4.1
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +47,56 @@ flutter:
   assets:
    - images/vacation_ready_logo.png
    - images/google_sign_in.png
+   - images/drawer_background.jpg
+   - images/plan_trip.jpg
+   - images/resume_planning.png
+   - images/chinese.jpeg
+   - images/indian.jpg
+   - images/greek.jpg
+   - images/desserts.jpg
+   - images/korean.jpg
+   - images/mongolian.jpg
+   - images/mediterranean.jpg
+   - images/french.jpg
+   - images/italian.jpeg
+   - images/thai.jpg
+   - images/japanese.jpg
+   - images/mexican.jpg
+   - images/monuments.jpg
+   - images/wildlife.jpeg
+   - images/museums.jpg
+   - images/themeparks.jpg
+   - images/culture.jpg
+   - images/landmarks.jpg
+   - images/art.jpg
+   - images/nightlife.jpg
+   - images/wellness.jpg
+   - images/sports.jpg
+   - images/adventure.jpg
+   - images/religion.jpg
+
+  fonts:
+  - family: Roboto
+    fonts:
+      - asset: fonts/Roboto-Thin.ttf
+        style: italic
+      - asset: fonts/Roboto-Black.ttf
+        style: normal
+      - asset: fonts/Roboto-Thin.ttf
+  - family: Montserrat
+    fonts:
+      - asset: fonts/Montserrat-Regular.ttf
+        style: normal
+      - asset: fonts/Montserrat-Italic.ttf
+        style: italic
+  - family: Montserrat-Black
+    fonts:
+      - asset: fonts/Montserrat-Medium.ttf
+        style: normal
+  - family: Montserrat-Bold
+    fonts:
+      - asset: fonts/Montserrat-Black.ttf
+        style: normal
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

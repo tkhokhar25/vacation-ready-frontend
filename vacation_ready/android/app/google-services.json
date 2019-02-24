@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "318131307305",
+    "firebase_url": "https://vacation-ready-1b71f.firebaseio.com",
+    "project_id": "vacation-ready-1b71f",
+    "storage_bucket": "vacation-ready-1b71f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318131307305:android:d7411d608ef7e592",
+        "android_client_info": {
+          "package_name": "com.example.vacationready"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318131307305-amtdconaaovsn118v2meg7tm64pj864o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vacationready",
+            "certificate_hash": "4319e8305ca4535b68bf55ea536d57108fe2175b"
+          }
+        },
+        {
+          "client_id": "318131307305-legk9dqdhl59c436p0kucjitllh5sb5o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFdUQLGr5v-nLRmakeFhxjS4cOily_1zk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "318131307305-legk9dqdhl59c436p0kucjitllh5sb5o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
