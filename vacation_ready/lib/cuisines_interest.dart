@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'attractions_user_data.dart';
 
 enum GridDemoTileStyle {
   twoLine
@@ -53,7 +54,7 @@ class _GridTitleText extends StatelessWidget {
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
-      child: Text(text),
+      child: Text(text, style: TextStyle(fontSize: 18, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), color: Colors.black,blurRadius: 3.0)]),),
     );
   }
 }
@@ -152,7 +153,7 @@ class OptionTiles extends StatefulWidget {
   final BannerTapCallback onBannerTap; // User
   double myBorderRadius = 10.0;
   double myBorderWidth = 0.0;
-  double isSelected = 0.7;
+  double isSelected = 0.6;
 
   OptionTiles({
     Key key,
@@ -174,8 +175,8 @@ class _OptionTilesState extends State<OptionTiles> {
   Widget build(BuildContext context) {
     final Widget image = GestureDetector(
       child: Hero(
-        key: Key(widget.photo.assetName),
-        tag: widget.photo.tag,
+        key: Key(widget.photo.title),
+        tag: widget.photo.title,
         child: Image.asset(
           widget.photo.assetName,
           package: widget.photo.assetPackage,
@@ -186,6 +187,10 @@ class _OptionTilesState extends State<OptionTiles> {
 
     switch (widget.tileStyle) {
       case GridDemoTileStyle.twoLine:
+        if (favoriteCuisines.contains(widget.photo.title)){
+          print("exists");
+          widget.isSelected = 1.0;
+        }
         return GridTile(
           footer: GestureDetector(
             child: GridTileBar(
@@ -201,15 +206,19 @@ class _OptionTilesState extends State<OptionTiles> {
                 child: image,
               ) 
               ),
-              // decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(89, 208, 255, 1.0), width: widget.myBorderWidth), 
-              //                           borderRadius: BorderRadius.circular(widget.myBorderRadius)),
             ),
             onTap: () {
               setState(() {
-                  if (widget.isSelected == 0.7){
+                  if (widget.isSelected == 0.6){
                     widget.isSelected = 1.0;
+                    selectCount += 1;
+                    favoriteCuisines.add(widget.photo.title);
+                    print(favoriteCuisines.length);
                   }else {
-                    widget.isSelected = 0.7;
+                    widget.isSelected = 0.6;
+                    selectCount -= 1;
+                    favoriteCuisines.remove(widget.photo.title);
+                    print(favoriteCuisines.length);
                   }
               });      
             },
@@ -221,78 +230,79 @@ class _OptionTilesState extends State<OptionTiles> {
   }
 }
 
-class GridListDemo extends StatefulWidget {
-  const GridListDemo({ Key key }) : super(key: key);
-
+class CuisineInterest extends StatefulWidget {
+  static int selectCount = 0;
+  static List<String> favoriteCuisines = [];
+  const CuisineInterest({ Key key }) : super(key: key);
   static const String routeName = 'interest-create';
 
   @override
-  GridListDemoState createState() => GridListDemoState();
+  CuisineInterestState createState() => CuisineInterestState();
 }
 
-class GridListDemoState extends State<GridListDemo> {
+class CuisineInterestState extends State<CuisineInterest> {
   GridDemoTileStyle _tileStyle = GridDemoTileStyle.twoLine;
 
   List<Photo> photos = <Photo>[
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'indian.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chennai',
+      title: 'Indian',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'chinese.jpeg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
+      title: 'Chinese',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'italian.jpeg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
+      title: 'Italian',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'japanese.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
+      title: 'Japanese',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'mexican.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
+      title: 'Mexican',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'thai.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
+      title: 'Thai',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'korean.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chennai',
+      title: 'Korean',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'mongolian.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chettinad',
+      title: 'Mongolian',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'greek.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chettinad',
+      title: 'Greek',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'french.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
+      title: 'French',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'mediterranean.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
+      title: 'Mediterranean',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'desserts.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
+      title: 'Desserts',
     ),
   ];
 
@@ -302,22 +312,49 @@ class GridListDemoState extends State<GridListDemo> {
     });
   }
 
+  void changePage(BuildContext context) {
+    if (selectCount == 0){
+      return;
+    }
+    Navigator.of(context).pushNamed('/attractions_select');
+  }
+
   @override
   Widget build(BuildContext context) {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top: 55.0,left: 20.0,bottom: 15.0), 
-            child: Opacity(
-              opacity: 1.0,
-              child: Text(
-              'What are your favorite cuisines ?',
-              textAlign: TextAlign.left,
-              style:TextStyle(fontFamily: 'Montserrat', fontSize: 26),
-              )
-            )   
+           
+          Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 55.0, left: 20.0, bottom: 15.0),
+                    child: Opacity(
+                      opacity: 1.0,
+                      child: Text(
+                      'What are your favorite cuisines ?',
+                      textAlign: TextAlign.left,
+                      style:TextStyle(fontFamily: 'Montserrat', fontSize: 26),
+                      )
+                    ),
+                  ),
+                ),
+
+                Container(
+                  child: FlatButton(
+                    child: Text("next", style: TextStyle(fontFamily: 'Montserrat-Black'),),
+                    onPressed: (){
+                      changePage(context);
+                    },  
+                    color: Color.fromRGBO(211, 211, 211, 1.0),
+                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0))
+                  ),
+                  padding: EdgeInsets.only(right: 20.0, left: 10.0, top: 30.0),
+                )
+              ]
           ),
 
           Expanded(
@@ -336,7 +373,7 @@ class GridListDemoState extends State<GridListDemo> {
                     tileStyle: _tileStyle,
                     onBannerTap: (Photo photo) {
                       setState(() {
-
+                        
                       });
                     }
                   );

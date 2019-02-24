@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'attractions_user_data.dart';
+
 
 enum GridDemoTileStyle {
   twoLine
@@ -31,7 +33,7 @@ class Photo {
   bool isFavorite;
   String get tag => assetName; // Assuming that all asset names are unique.
 
-  bool get isValid => assetName != null && title != null && caption != null && isFavorite != null;
+  bool get isValid => assetName != null && title != null && isFavorite != null;
 }
 
 class GridPhotoViewer extends StatefulWidget {
@@ -53,7 +55,7 @@ class _GridTitleText extends StatelessWidget {
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
-      child: Text(text),
+      child: Text(text, style: TextStyle(fontSize: 18, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), color: Colors.black,blurRadius: 3.0)]),),
     );
   }
 }
@@ -146,9 +148,15 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
     );
   }
 }
+class OptionTiles extends StatefulWidget {
+  final Photo photo;
+  final GridDemoTileStyle tileStyle;
+  final BannerTapCallback onBannerTap; // User
+  double myBorderRadius = 10.0;
+  double myBorderWidth = 0.0;
+  double isSelected = 0.6;
 
-class GridDemoPhotoItem extends StatelessWidget {
-  GridDemoPhotoItem({
+  OptionTiles({
     Key key,
     @required this.photo,
     @required this.tileStyle,
@@ -157,62 +165,68 @@ class GridDemoPhotoItem extends StatelessWidget {
        assert(tileStyle != null),
        assert(onBannerTap != null),
        super(key: key);
+  
+  @override
+  _OptionTilesState createState() => new _OptionTilesState();
+}
 
-  final Photo photo;
-  final GridDemoTileStyle tileStyle;
-  final BannerTapCallback onBannerTap; // User taps on the photo's header or footer.
-
-  void showPhoto(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(photo.title)
-          ),
-          body: SizedBox.expand(
-            child: Hero(
-              tag: photo.tag,
-              child: GridPhotoViewer(photo: photo),
-            ),
-          ),
-        );
-      }
-    ));
-  }
-
+class _OptionTilesState extends State<OptionTiles> {
   @override
   Widget build(BuildContext context) {
     final Widget image = GestureDetector(
-      onTap: () { showPhoto(context); },
       child: Hero(
-        key: Key(photo.assetName),
-        tag: photo.tag,
+        key: Key(widget.photo.title),
+        tag: widget.photo.title,
         child: Image.asset(
-          photo.assetName,
-          package: photo.assetPackage,
+          widget.photo.assetName,
+          package: widget.photo.assetPackage,
           fit: BoxFit.cover,
         )
       )
     );
 
-    switch (tileStyle) {
+    switch (widget.tileStyle) {
       case GridDemoTileStyle.twoLine:
+        if (favoriteAttractions.contains(widget.photo.title)){
+          print("exists");
+          widget.isSelected = 1.0;
+        }
+
         return GridTile(
           footer: GestureDetector(
-            onTap: () { onBannerTap(photo); },
             child: GridTileBar(
-              title: _GridTitleText(photo.title),
+              title: _GridTitleText(widget.photo.title),
             ),
           ),
-          child: Container(
-            child: new ClipRRect(
-              borderRadius: new BorderRadius.circular(10.0),
-              child: image,
+          child: GestureDetector(
+            child: Container(
+              child: new ClipRRect(
+              borderRadius: new BorderRadius.circular(widget.myBorderRadius),
+              child: Opacity(
+                opacity: widget.isSelected,
+                child: image,
+              ) 
+              ),
             ),
+            onTap: () {
+              setState(() {
+                  if (widget.isSelected == 0.6){
+                    widget.isSelected = 1.0;
+                    selectCount += 1;
+                    favoriteAttractions.add(widget.photo.title);
+                    print(favoriteAttractions.length);
+                  }else {
+                    widget.isSelected = 0.6;
+                    selectCount -= 1;
+                    favoriteAttractions.remove(widget.photo.title);
+                    print(favoriteAttractions.length);
+                  }
+              });         
+            },
           )
           );
     }
-    assert(tileStyle != null);
+    assert(widget.tileStyle != null);
     return null;
   }
 }
@@ -231,76 +245,64 @@ class AttractionsInterestState extends State<AttractionsInterest> {
 
   List<Photo> photos = <Photo>[
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'themeparks.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chennai',
-      caption: 'Flower Market',
+      title: 'Theme Parks',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'monuments.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
-      caption: 'Bronze Works',
+      title: 'Monuments',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'landmarks.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
-      caption: 'Market',
+      title: 'Landmarks',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'culture.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
-      caption: 'Thanjavur Temple',
+      title: 'Culture',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'museums.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
-      caption: 'Thanjavur Temple',
+      title: 'Museums',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'wildlife.jpeg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
-      caption: 'Salt Farm',
+      title: 'Wildlife',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'sports.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chennai',
-      caption: 'Scooters',
+      title: 'Sports',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'wellness.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chettinad',
-      caption: 'Silk Maker',
+      title: 'Wellnes',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'nightlife.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Chettinad',
-      caption: 'Lunch Prep',
+      title: 'Nightlife',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'adventure.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Tanjore',
-      caption: 'Market',
+      title: 'Adventure',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'religion.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
-      caption: 'Beach',
+      title: 'Religion',
     ),
     Photo(
-      assetName: 'chinese.jpg',
+      assetName: 'art.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Pondicherry',
-      caption: 'Fisherman',
+      title: 'Art',
     ),
   ];
 
@@ -310,20 +312,51 @@ class AttractionsInterestState extends State<AttractionsInterest> {
     });
   }
 
+  void changePage() {
+    var jsonReq = new Request(0,0.0, favoriteCuisines, 0.0, favoriteAttractions, 1);
+    Map myMap = request_to_map(jsonReq);
+    String json = request_to_JSON(myMap);
+    return;
+    //Navigator.of(context).pushNamed('/attractions_select');
+  }
+
   @override
   Widget build(BuildContext context) {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top: 55.0,left: 20.0,bottom: 15.0), 
-            child: Text(
-              'What are your favorite cuisines ?',
-              textAlign: TextAlign.left,
-              style:TextStyle(fontFamily: 'Montserrat', fontSize: 28),
-            )
+           
+          Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 55.0, left: 20.0, bottom: 15.0),
+                    child: Opacity(
+                      opacity: 1.0,
+                      child: Text(
+                      'What activities are you interested in ?',
+                      textAlign: TextAlign.left,
+                      style:TextStyle(fontFamily: 'Montserrat', fontSize: 26),
+                      )
+                    ),
+                  ),
+                ),
+
+                Container(
+                  child: FlatButton(
+                    child: Text("next", style: TextStyle(fontFamily: 'Montserrat-Black'),),
+                    onPressed: changePage, 
+                    color: Color.fromRGBO(211, 211, 211, 1.0),
+                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0))
+                    
+                  ),
+                  padding: EdgeInsets.only(right: 20.0, left: 10.0, top: 30.0),
+                )
+              ]
           ),
+
           Expanded(
             child: SafeArea(
               top: false,
@@ -335,12 +368,12 @@ class AttractionsInterestState extends State<AttractionsInterest> {
                 padding: const EdgeInsets.all(20.0),
                 childAspectRatio: (orientation == Orientation.portrait) ? 1.0 : 1.3,
                 children: photos.map<Widget>((Photo photo) {
-                  return GridDemoPhotoItem(                  
+                  return OptionTiles(                  
                     photo: photo,
                     tileStyle: _tileStyle,
                     onBannerTap: (Photo photo) {
                       setState(() {
-                        photo.isFavorite = !photo.isFavorite;
+                        
                       });
                     }
                   );

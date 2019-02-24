@@ -13,9 +13,6 @@ environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
 dependencies:
-  google_sign_in: ^3.0,4
-  # flutter_webview_plugin: ^0.1.6
-  # splashscreen: ^0.0.7
   material_search: ^0.2.7
   open_file: ^1.0.7
   image_picker: ^0.4.6
@@ -46,7 +43,33 @@ flutter:
   uses-material-design: true
 
   assets:
-   - res/chinese.jpg
+   - res/chinese.jpeg
+   - res/indian.jpg
+   - res/greek.jpg
+   - res/desserts.jpg
+   - res/korean.jpg
+   - res/mongolian.jpg
+   - res/mediterranean.jpg
+   - res/french.jpg
+   - res/italian.jpeg
+   - res/thai.jpg
+   - res/japanese.jpg
+   - res/mexican.jpg
+
+   - res/monuments.jpg
+   - res/wildlife.jpeg
+   - res/museums.jpg
+   - res/themeparks.jpg
+   - res/culture.jpg
+   - res/landmarks.jpg
+   - res/art.jpg
+   - res/nightlife.jpg
+   - res/wellness.jpg
+   - res/sports.jpg
+   - res/adventure.jpg
+   - res/religion.jpg
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
@@ -74,6 +97,10 @@ flutter:
         - asset: fonts/Montserrat-Italic.ttf
           style: italic
     - family: Montserrat-Black
+      fonts:
+        - asset: fonts/Montserrat-Medium.ttf
+          style: normal
+    - family: Montserrat-Bold
       fonts:
         - asset: fonts/Montserrat-Black.ttf
           style: normal
