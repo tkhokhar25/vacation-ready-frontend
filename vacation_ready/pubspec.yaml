@@ -10,7 +10,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=1.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -25,6 +25,9 @@ dependencies:
   material_search: ^0.2.7
   open_file: ^1.0.7
   path_provider: ^0.4.1
+  flutter_google_places: ^0.1.4
+  datetime_picker_formfield: ^0.1.8
+
 
 dev_dependencies:
   flutter_test:

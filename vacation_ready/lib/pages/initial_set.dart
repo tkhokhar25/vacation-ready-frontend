@@ -18,10 +18,12 @@ class InitialSetInterestState extends State<InitialSetInterest> {
         favoriteCuisines,
         (sliderOverallBudget / (sliderNumPeople + 1)).toInt(),
         favoriteAttractions,
-        1);
+        2);
     Map myMap = request_to_map(jsonReq);
     String json = request_to_JSON(myMap);
-    Navigator.pushNamed(context, '/cuisines_select');
+    sendCreateAccountRequest(json);
+    
+    Navigator.pushNamed(context, '/trip_info_select');
   }
 
   Widget build(BuildContext context) {
@@ -117,7 +119,7 @@ class InitialSetInterestState extends State<InitialSetInterest> {
               new Padding(padding: EdgeInsets.only(top: 35.0)),
               Container(
                 child: Text(
-                  "What is your overall budget? (per person)",
+                  "What is your overall budget?",
                   style: TextStyle(fontFamily: 'Montserrat', fontSize: 18),
                   textAlign: TextAlign.left,
                 ),
@@ -143,16 +145,14 @@ class InitialSetInterestState extends State<InitialSetInterest> {
             ])),
             new Expanded(
                 child: new Container(
-                    padding: EdgeInsets.only(bottom: 10.0),
+                    padding: EdgeInsets.only(bottom: 25.0),
                     child: Align(
                         alignment: FractionalOffset.bottomCenter,
-                        child: MaterialButton(
-                          shape: RoundedRectangleBorder(),
-                          minWidth: 200.0,
-                          height: 42.0,
+                        child: FlatButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                           onPressed: changePage,
                           color: Color.fromRGBO(162, 228, 236, 1),
-                          child: Text('Submit'),
+                          child: Text('Submit', style: TextStyle(fontFamily: 'Montserrat-Black'),),
                         ))))
           ],
         ));
