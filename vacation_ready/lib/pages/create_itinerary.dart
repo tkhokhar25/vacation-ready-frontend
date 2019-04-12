@@ -155,6 +155,6 @@ class CreateItineraryState extends State<CreateItinerary> {
               }).toList(),
           ),
             ])
-          ));
-          
-          }}
+          ));      
+    }
+  }
