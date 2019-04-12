@@ -69,6 +69,7 @@ class _TripInfoSelectState extends State<TripInfoSelect> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           saveDetails();
+          Navigator.pushNamed(context, '/create_itinerary');
         },
         child: Icon(Icons.flight_takeoff),
         backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
