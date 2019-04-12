@@ -5,51 +5,26 @@ import 'package:http/http.dart' as http;
 List<String> favoriteCuisines = [];
 List<String> favoriteAttractions = [];
 int selectCount = 0;
-
-double sliderMealNum = 3;
-double sliderMealBudget = 10;
-double sliderOverallBudget = 500;
-double sliderNumPeople = 3;
 var interest_set_id = -1;
-var SET_INTEREST_URL = "http://ba358c56.ngrok.io/set-interest-set";
-var UPDATE_INTEREST_URL = "http://ba358c56.ngrok.io/update-interest-set";
+String set_name = "";
+
+var SET_INTEREST_URL = "http://vr-vacation-ready.herokuapp.com/set-interest-set";
+var UPDATE_INTEREST_URL = "http://vr-vacation-ready.herokuapp.com/update-interest-set";
 
 class Request {
-  int num_meals = 0;
-  int average_meal_budget = 0;
   List cuisines = [];
-  int average_attraction_budget = 0;
   List attractions = [];
   int user_id = -1;
+  String set_name = "";
 
-  // Constructor, with syntactic sugar for assignment to members.
-  Request(this.num_meals, this.average_meal_budget, this.cuisines, this.average_attraction_budget, this.attractions, this.user_id) {
+  Request(this.cuisines, this.attractions, this.user_id) {
     // Initialization code goes here.
   }
 }
 
-/* {
-   "num_meals":5,
-   “average_meal_budget”: 1000,
-   "cuisines":[
-      "Mexican",
-      "Indian"
-   ],
-   "average_attraction_budget": 5000,
-   "attractions":[
-      "Concerts",
-      "Parks"
-   ],
-    “user_id” : 5
-}
-*/
-
 Map request_to_map(Request r1){
     var m1 = Map();
-    m1["num_meals"] = r1.num_meals;
-    m1["average_meal_budget"] = r1.average_meal_budget;
     m1["cuisines"] = r1.cuisines;
-    m1["average_attraction_budget"] = r1.average_attraction_budget;
     m1["attractions"] = r1.attractions;
     m1["user_id"] = r1.user_id;
     return m1;

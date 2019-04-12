@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import '../utilities/drawer.dart';
-import '../utilities/attractions_user_data.dart';
+import '../utilities/trip_info_user_data.dart';
 
 class InitialSetInterest extends StatefulWidget {
   const InitialSetInterest({Key key}) : super(key: key);
@@ -11,18 +11,7 @@ class InitialSetInterest extends StatefulWidget {
 }
 
 class InitialSetInterestState extends State<InitialSetInterest> {
-  void changePage() {
-    var jsonReq = new Request(
-        sliderMealNum.toInt(),
-        sliderMealBudget.toInt(),
-        favoriteCuisines,
-        (sliderOverallBudget / (sliderNumPeople + 1)).toInt(),
-        favoriteAttractions,
-        2);
-    Map myMap = request_to_map(jsonReq);
-    String json = request_to_JSON(myMap);
-    sendCreateAccountRequest(json);
-    
+  void changePage() {   
     Navigator.pushNamed(context, '/trip_info_select');
   }
 
@@ -152,7 +141,7 @@ class InitialSetInterestState extends State<InitialSetInterest> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                           onPressed: changePage,
                           color: Color.fromRGBO(162, 228, 236, 1),
-                          child: Text('Submit', style: TextStyle(fontFamily: 'Montserrat-Black'),),
+                          child: Text('next', style: TextStyle(fontFamily: 'Montserrat-Black'),),
                         ))))
           ],
         ));

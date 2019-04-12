@@ -76,6 +76,8 @@ flutter:
    - images/sports.jpg
    - images/adventure.jpg
    - images/religion.jpg
+   - images/interests_types.jpg
+   - images/old_interest_set.jpg
 
   fonts:
   - family: Roboto

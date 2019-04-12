@@ -36,7 +36,7 @@ class _CreateTripBodyState extends State<CreateTripBody> {
                 ),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/cuisines_select');
+                    Navigator.pushNamed(context, '/select_interest_set');
                   },
                   child: Column(children: <Widget>[
                   new Padding(padding: EdgeInsets.only(top: 20.0)),

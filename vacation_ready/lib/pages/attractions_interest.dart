@@ -309,6 +309,13 @@ class AttractionsInterestState extends State<AttractionsInterest> {
   }
 
   void changePage() {
+    var jsonReq = new Request(
+      favoriteCuisines,
+      favoriteAttractions,
+      2);
+    Map myMap = request_to_map(jsonReq);
+    String json = request_to_JSON(myMap);
+    sendCreateAccountRequest(json);
     Navigator.pushNamed(context, '/create_initial_set');
   }
 
@@ -342,7 +349,7 @@ class AttractionsInterestState extends State<AttractionsInterest> {
                 Container(
                   child: FlatButton(
                       child: Text(
-                        "next",
+                        "create set",
                         style: TextStyle(fontFamily: 'Montserrat-Black'),
                       ),
                       onPressed: changePage,

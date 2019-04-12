@@ -36,23 +36,40 @@ class _TripInfoSelectState extends State<TripInfoSelect> {
   DateTime dateArrival;
   DateTime dateDeparture;
 
-  void saveDetails(){
-    if (dateArrival.toString() == "" || dateDeparture.toString() == "" || destination == ""){
+  void saveDetails() {
+    if (dateArrival.toString() == "" ||
+        dateDeparture.toString() == "" ||
+        place_id == "") {
       return;
     }
     arrival = dateArrival.toString();
     departure = dateDeparture.toString();
-    print(arrival);
-    print(departure);
-    print(destination);
+    
+    var jsonReq = new Request(
+      sliderMealNum.toInt(),
+      sliderMealBudget.toInt(),
+      (sliderOverallBudget / (sliderNumPeople + 1)).toInt(),
+      2,
+      arrival,
+      departure,
+      place_id);
+    Map myMap = request_to_map(jsonReq);
+    String json = request_to_JSON(myMap);
+    sendCreateAccountRequest(json);
     // Navigator.of(context).pushNamed('/itinerary_page');
   }
 
   @override
   Widget build(BuildContext context) {
+    FocusNode focus_node = new FocusNode();
+    // focus_node.addListener();
+
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {saveDetails();},
+        onPressed: () {
+          saveDetails();
+        },
         child: Icon(Icons.flight_takeoff),
         backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
         foregroundColor: Colors.white,
@@ -67,7 +84,10 @@ class _TripInfoSelectState extends State<TripInfoSelect> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 30),
-            child: Text("Trip Details", style: TextStyle(fontFamily: "Montserrat", fontSize: 30),),
+            child: Text(
+              "Trip Details",
+              style: TextStyle(fontFamily: "Montserrat", fontSize: 30),
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(top: 20),
@@ -94,57 +114,70 @@ class _TripInfoSelectState extends State<TripInfoSelect> {
               ],
             ),
           ),
-          
+
           Padding(
-            child: Text("What is your date and time of arrival ?", style: TextStyle(fontSize: 20),), 
-            padding: EdgeInsets.only(top: 70, right: 40, left: 20),),
-            
-          //Expanded(
-            Container(
-              padding: EdgeInsets.only(left: 20.0, right: 40),
-              height: 90,
-              child: ListView(
-                children: <Widget>[
-                  DateTimePickerFormField(
-                    maxLines: 1,
-                    inputType: inputType,
-                    format: formats[inputType],
-                    editable: editable,
-                    decoration: InputDecoration(
-                        labelText: 'Date/Time', hasFloatingPlaceholder: false,
-                        ),
-                    onChanged: (dt) => setState(() => dateArrival = dt),
-                  ),
-                  SizedBox(height: 5.0),
-                ],
-              ),
+            child: Text(
+              "What is your date and time of arrival ?",
+              style: TextStyle(fontSize: 20),
             ),
+            padding: EdgeInsets.only(top: 70, right: 40, left: 20),
+          ),
+
+          //Expanded(
+          Container(
+            padding: EdgeInsets.only(left: 20.0, right: 40),
+            height: 90,
+            child: ListView(
+              children: <Widget>[
+                FocusScope(
+                    node: new FocusScopeNode(),
+                    child: DateTimePickerFormField(
+                      maxLines: 1,
+                      inputType: inputType,
+                      format: formats[inputType],
+                      editable: editable,
+                      decoration: InputDecoration(
+                        labelText: 'Date/Time',
+                        hasFloatingPlaceholder: false,
+                      ),
+                      onChanged: (dt) => setState(() => dateArrival = dt),
+                    )),
+                SizedBox(height: 5.0),
+              ],
+            ),
+          ),
           //),
 
           Padding(
-            child: Text("What is your date and time of departure ?", style: TextStyle(fontSize: 20),), 
-            padding: EdgeInsets.only(right: 40, left: 20),),
-          
+            child: Text(
+              "What is your date and time of departure ?",
+              style: TextStyle(fontSize: 20),
+            ),
+            padding: EdgeInsets.only(right: 40, left: 20),
+          ),
+
           Expanded(
             child: Container(
               padding: EdgeInsets.only(left: 20.0, right: 40),
               child: ListView(
                 children: <Widget>[
-                  DateTimePickerFormField(
-                    inputType: inputType,
-                    format: formats[inputType],
-                    editable: editable,
-                    decoration: InputDecoration(
-                        labelText: 'Date/Time', hasFloatingPlaceholder: false,
+                  FocusScope(
+                      node: new FocusScopeNode(),
+                      child: DateTimePickerFormField(
+                        inputType: inputType,
+                        format: formats[inputType],
+                        editable: editable,
+                        decoration: InputDecoration(
+                          labelText: 'Date/Time',
+                          hasFloatingPlaceholder: false,
                         ),
-                    onChanged: (dt) => setState(() => dateDeparture = dt),
-                  ),
+                        onChanged: (dt) => setState(() => dateDeparture = dt),
+                      )),
                   SizedBox(height: 50.0),
                 ],
               ),
             ),
           )
-                         
         ],
       ),
     );
@@ -164,6 +197,7 @@ Future<Null> displayPrediction(Prediction p, ScaffoldState scaffold) async {
     // get detail (lat/lng)
     PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
     myController.text = detail.result.name.toString();
-    destination = detail.result.placeId;
+    place_id = detail.result.placeId;
   }
 }
+
