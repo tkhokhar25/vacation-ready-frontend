@@ -16,11 +16,11 @@ class CreateItinerary extends StatefulWidget {
 
 class CreateItineraryState extends State<CreateItinerary> {
   String currentId, currentType;
+  bool loaded = false;
   List breakfast_list, lunch_list, dinner_list, attractions;
-  bool isOpened = false;
+  bool isLoaded = false;
 
-  Future<String> getData() async {
- 
+  Future<Widget> getData() async {
     http.Response response = await http.post(
         serverAddress + 'generate-trip',
         headers: {
@@ -34,14 +34,13 @@ class CreateItineraryState extends State<CreateItinerary> {
       if (response.statusCode == 400) {
         
       } else {
+        isLoaded = true;
         breakfast_list = jsonDecode(response.body)['restaurants']['breakfast'];
         lunch_list = jsonDecode(response.body)['restaurants']['lunch'];
         dinner_list = jsonDecode(response.body)['restaurants']['dinner'];
-        print(breakfast_list);
+        return new Container();
       }
     });
-
-    return "Success";
   }
 
   @override
@@ -109,7 +108,10 @@ class CreateItineraryState extends State<CreateItinerary> {
           title: new Text("vacation ready"),
           backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
         ),
-        body: new Container(
+        body: 
+                    !isLoaded ?
+                       new Container(child: CircularProgressIndicator(), alignment: Alignment.center) :
+                       new Container(
           padding: EdgeInsets.only(left: 80, top: 20.0),
           child: Column(
             children: <Widget>[
@@ -153,8 +155,6 @@ class CreateItineraryState extends State<CreateItinerary> {
               }).toList(),
           ),
             ])
-          )
-              
-    );
-  }
-}
+          ));
+          
+          }}
