@@ -168,6 +168,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CreateItinerary extends StatefulWidget {
   @override
@@ -177,14 +178,15 @@ class CreateItinerary extends StatefulWidget {
 class CreateItineraryState extends State<CreateItinerary> {
   String currentId, currentType;
   bool loaded = false;
-  List breakfast_list, lunch_list, dinner_list, total_options;
+  List breakfast_list, lunch_list, dinner_list, total_options, data_to_card;
   Map attractions;
-  bool isLoaded = false;
+  bool isLoaded = false, isSelected = false;
   List<ListTile> litems = [];
   List<Widget> carousels = [];
   bool is_first_carousel = true;
   Map events_data;
-  var _current, attractions_list, data_to_card;
+  var _current, attractions_list, _currentSelection;
+  List selected_options = [];
 
   Future<Widget> getData() async {
     http.Response response = await http.post(serverAddress + 'generate-trip',
@@ -406,38 +408,39 @@ class CreateItineraryState extends State<CreateItinerary> {
 
   void confirmNewEvent() {
     Navigator.pop(context);
+    if (_currentSelection == null) {
+      _currentSelection = 0;
+    }
+    setState(() {
+      isSelected = true;
+      //print(_currentSelection);
+      if (data_to_card != null) {
+        selected_options.add(data_to_card[_currentSelection]);
+      }
+    });
+
     if (_current == null) {
       _current = 0;
     }
 
-    String selected_option = total_options[_current];
-    if (selected_option == "breakfast") {
-      data_to_card = breakfast_list;
-    } else if (selected_option == "lunch") {
-      data_to_card = lunch_list;
-    } else if (selected_option == "dinner") {
-      data_to_card = dinner_list;
-    } else {
-      data_to_card = attractions[selected_option];
-    }
+    String selected = total_options[_current];
+    setState(() {
+      if (selected == "breakfast") {
+        data_to_card = breakfast_list;
+        total_options.removeAt(_current);
+      } else if (selected == "lunch") {
+        data_to_card = lunch_list;
+        total_options.removeAt(_current);
+      } else if (selected == "dinner") {
+        data_to_card = dinner_list;
+        total_options.removeAt(_current);
+      } else {
+        data_to_card = attractions[selected];
+      }
+    });
+    print(data_to_card);
+    print(isSelected);
 
-    Widget carousel = new Container(
-          padding: EdgeInsets.only(left: 80, top: 20.0),
-          child: Column(
-            children: <Widget>[
-              CarouselSlider(
-                viewportFraction: 0.95,
-              height: 80.0,
-              items: data_to_card.map((i) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      child: buildCard(i)
-                    );
-                  },
-                );
-              }).toList(),
-          )]));
     _current = 0;
   }
 
@@ -449,17 +452,54 @@ class CreateItineraryState extends State<CreateItinerary> {
           title: new Text("vacation ready"),
           backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
         ),
-        floatingActionButton: new FloatingActionButton(
-          child: const Icon(Icons.add),
-          backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
-          onPressed: addNewEvent,
-        ),
+        floatingActionButton: !isLoaded
+            ? new Container()
+            : new FloatingActionButton(
+                child: const Icon(Icons.add),
+                backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
+                onPressed: addNewEvent,
+              ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: new Column(
-          // children: <Widget>[
-          //   new Expanded(
-                
-          // ],
-        ));
+        body: !isLoaded
+            ? new Container(
+                child: CircularProgressIndicator(), alignment: Alignment.center)
+            : !isSelected
+                ? new Container()
+                : new GridView.count(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(top: 50, left: 80, right: 20),
+                    crossAxisCount: 1,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: new ListView(
+                          primary: true,
+                          children: List.generate(
+                              selected_options == null
+                                  ? 0
+                                  : selected_options.length, (index) {
+                            return buildCard(selected_options[index]);
+                          }),
+                        )),
+                        Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: new ListView( children: <Widget>[
+                        CarouselSlider(
+                          viewportFraction: 0.95,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentSelection = index;
+                            });
+                          },
+                          height: 80.0,
+                          items: data_to_card.map((i) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(child: buildCard(i));
+                              },
+                            );
+                          }).toList(),
+                        )])),
+                      ]));
   }
 }
