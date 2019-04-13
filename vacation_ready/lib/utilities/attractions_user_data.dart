@@ -10,6 +10,7 @@ String set_name = "";
 
 var SET_INTEREST_URL = "http://vr-vacation-ready.herokuapp.com/set-interest-set";
 var UPDATE_INTEREST_URL = "http://vr-vacation-ready.herokuapp.com/update-interest-set";
+var GET_INTEREST_URL = "http://vr-vacation-ready.herokuapp.com/get-interest-set";
 
 class Request {
   List cuisines = [];
@@ -57,4 +58,26 @@ sendCreateAccountRequest(String json) async {
     } catch (Exception) {
       print(Exception.toString());
   }
+}
+
+ Future<Map> getInterestSet(var interest_set_id) async {
+  String URL = GET_INTEREST_URL;
+  String json;
+  if (interest_set_id != -1){
+      Map interest_data = new Map();
+      interest_data["interest_set_id"] = interest_set_id;
+      json = jsonEncode(interest_data);
+  }
+
+  try{
+    http
+    .post(URL, headers : {"Content-Type" : "application/json"}, body : json)
+    .then((response) {
+      Map data = jsonDecode(response.body);  
+      return data;
+    });
+    } catch (Exception) {
+      print(Exception.toString());
+  }
+  return null;
 }

@@ -177,10 +177,14 @@ class CreateItinerary extends StatefulWidget {
 class CreateItineraryState extends State<CreateItinerary> {
   String currentId, currentType;
   bool loaded = false;
-  List breakfast_list, lunch_list, dinner_list, attractions;
+  List breakfast_list, lunch_list, dinner_list, total_options;
+  Map attractions;
   bool isLoaded = false;
-  List<String> litems = [];
-  final TextEditingController eCtrl = new TextEditingController();
+  List<ListTile> litems = [];
+  List<Widget> carousels = [];
+  bool is_first_carousel = true;
+  Map events_data;
+  var _current, attractions_list, data_to_card;
 
   Future<Widget> getData() async {
     http.Response response = await http.post(serverAddress + 'generate-trip',
@@ -194,14 +198,43 @@ class CreateItineraryState extends State<CreateItinerary> {
         breakfast_list = jsonDecode(response.body)['restaurants']['breakfast'];
         lunch_list = jsonDecode(response.body)['restaurants']['lunch'];
         dinner_list = jsonDecode(response.body)['restaurants']['dinner'];
+        attractions = jsonDecode(response.body)['attractions'];
         return new Container();
       }
     });
   }
 
+  Future<Map> getInterestSet(var interest_set_id) async {
+    String URL = GET_INTEREST_URL;
+    String json;
+    if (interest_set_id != -1) {
+      Map interest_data = new Map();
+      interest_data["interest_set_id"] = interest_set_id;
+      json = jsonEncode(interest_data);
+    }
+
+    try {
+      http
+          .post(URL, headers: {"Content-Type": "application/json"}, body: json)
+          .then((response) {
+        events_data = jsonDecode(response.body);
+        attractions_list = events_data['result'][0]['attractions'];
+        total_options = attractions_list;
+        total_options.add("breakfast");
+        total_options.add("lunch");
+        total_options.add("dinner");
+      });
+    } catch (Exception) {
+      print(Exception.toString());
+    }
+    return null;
+  }
+
   @override
   void initState() {
     this.getData();
+    this.getInterestSet(24);
+    print(total_options);
   }
 
   Icon getIconAssociatedToType(String type) {
@@ -256,30 +289,110 @@ class CreateItineraryState extends State<CreateItinerary> {
     return customCard;
   }
 
+  Card buildOptionsCard(var type) {
+    var typeEvent = "attraction";
+    if (type == "breakfast" || type == "lunch" || type == "dinner") {
+      typeEvent = "food";
+    }
+    var customCard = new Card(
+      elevation: 5.0,
+      margin: EdgeInsets.all(4.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: new Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+              title: Text(type,
+                  overflow: TextOverflow.ellipsis,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 12.0)),
+              subtitle: Text(typeEvent,
+                  style: new TextStyle(fontSize: 12.0),
+                  overflow: TextOverflow.ellipsis)),
+        ],
+      ),
+    );
+    return customCard;
+  }
+
+  // Card buildEventCard(var data) {
+  //   var customCard = new Card(
+  //     elevation: 5.0,
+  //     margin: EdgeInsets.all(4.0),
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(15.0),
+  //     ),
+  //     child: new Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: <Widget>[
+  //         ListTile(
+  //           leading: getIconAssociatedToType("breakfast"),
+  //           title: Text(data["name"],
+  //               overflow: TextOverflow.ellipsis,
+  //               style:
+  //                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
+  //           subtitle: Text(data["cuisine"].toString().toUpperCase(),
+  //               style: new TextStyle(fontSize: 12.0),
+  //               overflow: TextOverflow.ellipsis),
+  //           trailing: GestureDetector(
+  //               child: Icon(
+  //                 Icons.location_on,
+  //                 color: Colors.indigoAccent,
+  //               ),
+  //               onTap: () {
+  //                 launch(data['maps_link']);
+  //               }),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //   return customCard;
+  // }
+
   void addNewEvent() {
     showModalBottomSheet(
         context: context,
         builder: (context) {
           return Container(
               color: Color(0xFF737373),
-              height: 150,
+              height: 190,
               child: Container(
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: CarouselSlider(
-                        viewportFraction: 0.95,
-                        height: 100.0,
-                        items: breakfast_list.map((i) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(child: buildCard(i));
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    )
+                        padding: EdgeInsets.only(top: 20),
+                        child: Stack(children: [
+                          CarouselSlider(
+                              viewportFraction: 0.95,
+                              height: 100.0,
+                              items: total_options.map((i) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                        child: buildOptionsCard(i));
+                                  },
+                                );
+                              }).toList(),
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              }),
+                        ])),
+                    Padding(
+                        padding: EdgeInsets.only(top: 10, bottom: 10),
+                        child: RaisedButton(
+                          child: const Icon(
+                            Icons.done,
+                            color: Colors.white,
+                          ),
+                          onPressed: confirmNewEvent,
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(300.0)),
+                          color: Color.fromRGBO(101, 202, 214, 1.0),
+                        )),
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -289,6 +402,43 @@ class CreateItineraryState extends State<CreateItinerary> {
                         topRight: Radius.circular(15))),
               ));
         });
+  }
+
+  void confirmNewEvent() {
+    Navigator.pop(context);
+    if (_current == null) {
+      _current = 0;
+    }
+
+    String selected_option = total_options[_current];
+    if (selected_option == "breakfast") {
+      data_to_card = breakfast_list;
+    } else if (selected_option == "lunch") {
+      data_to_card = lunch_list;
+    } else if (selected_option == "dinner") {
+      data_to_card = dinner_list;
+    } else {
+      data_to_card = attractions[selected_option];
+    }
+
+    Widget carousel = new Container(
+          padding: EdgeInsets.only(left: 80, top: 20.0),
+          child: Column(
+            children: <Widget>[
+              CarouselSlider(
+                viewportFraction: 0.95,
+              height: 80.0,
+              items: data_to_card.map((i) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      child: buildCard(i)
+                    );
+                  },
+                );
+              }).toList(),
+          )]));
+    _current = 0;
   }
 
   @override
@@ -306,14 +456,10 @@ class CreateItineraryState extends State<CreateItinerary> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: new Column(
-          children: <Widget>[
-            new Expanded(
-                child: new ListView.builder(
-                    itemCount: litems.length,
-                    itemBuilder: (BuildContext ctxt, int Index) {
-                      return new Text(litems[Index]);
-                    }))
-          ],
+          // children: <Widget>[
+          //   new Expanded(
+                
+          // ],
         ));
   }
 }
