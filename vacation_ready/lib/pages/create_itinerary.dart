@@ -26,7 +26,7 @@ class CreateItineraryState extends State<CreateItinerary> {
         headers: {
           "Content-Type": "application/json"
         }, body: json.encode({
-          "trip_id": 29,
+          "trip_id": trip_id,
           "interest_set_id": 24
         }));
     print(response.statusCode);
@@ -109,7 +109,7 @@ class CreateItineraryState extends State<CreateItinerary> {
           backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
         ),
         body: 
-                    !isLoaded ?
+              !isLoaded ?
                        new Container(child: CircularProgressIndicator(), alignment: Alignment.center) :
                        new Container(
           padding: EdgeInsets.only(left: 80, top: 20.0),
