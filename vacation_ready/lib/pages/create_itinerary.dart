@@ -1,15 +1,4 @@
-// import 'package:flutter/material.dart';
-// import '../utilities/drawer.dart';
-// import '../utilities/user_info.dart';
-// import '../utilities/trip_info_user_data.dart';
-// import '../utilities/attractions_user_data.dart';
-// import 'package:url_launcher/url_launcher.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:async';
-// import 'dart:convert';
-// import 'package:carousel_slider/carousel_slider.dart';
-
-// class CreateItinerary extends StatefulWidget {
+  // class CreateItinerary extends StatefulWidget {
 //   @override
 //   State createState() => CreateItineraryState();
 // }
@@ -168,7 +157,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CreateItinerary extends StatefulWidget {
   @override
@@ -459,21 +448,20 @@ class CreateItineraryState extends State<CreateItinerary> {
                 backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
                 onPressed: addNewEvent,
               ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: !isLoaded
             ? new Container(
                 child: CircularProgressIndicator(), alignment: Alignment.center)
             : !isSelected
                 ? new Container()
-                : new GridView.count(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(top: 50, left: 80, right: 20),
-                    crossAxisCount: 1,
+                : new ListView(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: new ListView(
-                          primary: true,
+                      Padding(padding: EdgeInsets.only(top: 15)),
+                      Container(
+                          padding:EdgeInsets.only(left: 60, right: 50), 
+                          height: selected_options.length * 80.0, 
+                          child: new ListView(
+                          physics: NeverScrollableScrollPhysics(),
                           children: List.generate(
                               selected_options == null
                                   ? 0
@@ -481,9 +469,10 @@ class CreateItineraryState extends State<CreateItinerary> {
                             return buildCard(selected_options[index]);
                           }),
                         )),
-                        Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: new ListView( children: <Widget>[
+                        Container(
+                        height: 91.0,
+                        padding: EdgeInsets.only(left: 60, right: 50),
+                        child: new ListView(physics: NeverScrollableScrollPhysics(), children: <Widget>[
                         CarouselSlider(
                           viewportFraction: 0.95,
                           onPageChanged: (index) {
@@ -500,6 +489,6 @@ class CreateItineraryState extends State<CreateItinerary> {
                             );
                           }).toList(),
                         )])),
-                      ]));
+                    ]));
   }
 }
