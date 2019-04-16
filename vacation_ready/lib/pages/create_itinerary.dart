@@ -1,152 +1,3 @@
-  // class CreateItinerary extends StatefulWidget {
-//   @override
-//   State createState() => CreateItineraryState();
-// }
-
-// class CreateItineraryState extends State<CreateItinerary> {
-//   String currentId, currentType;
-//   bool loaded = false;
-//   List breakfast_list, lunch_list, dinner_list, attractions;
-//   bool isLoaded = false;
-
-//   Future<Widget> getData() async {
-//     http.Response response = await http.post(
-//         serverAddress + 'generate-trip',
-//         headers: {
-//           "Content-Type": "application/json"
-//         }, body: json.encode({
-//           "trip_id": 29,
-//           "interest_set_id": 24
-//         }));
-//     print(response.statusCode);
-//     this.setState(() {
-//       if (response.statusCode == 400) {
-
-//       } else {
-//         isLoaded = true;
-//         breakfast_list = jsonDecode(response.body)['restaurants']['breakfast'];
-//         lunch_list = jsonDecode(response.body)['restaurants']['lunch'];
-//         dinner_list = jsonDecode(response.body)['restaurants']['dinner'];
-//         return new Container();
-//       }
-//     });
-//   }
-
-//   @override
-//   void initState() {
-//       this.getData();
-//     }
-
-//   Icon getIconAssociatedToType(String type) {
-//     Icon iconToReturn;
-
-//     if (type == "breakfast" || type == "lunch" || type == "dinner") {
-//       iconToReturn = Icon(
-//         Icons.fastfood,
-//         color: Colors.indigoAccent,
-//       );
-//     } else {
-//       iconToReturn = Icon(
-//         Icons.party_mode,
-//         color: Colors.indigoAccent,
-//       );
-//     }
-
-//     return iconToReturn;
-//   }
-
-//   Card buildCard(var data) {
-//     var customCard = new Card(
-//       elevation: 5.0,
-//       margin: EdgeInsets.all(4.0),
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(15.0),
-//       ),
-//       child: new Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: <Widget>[
-//           ListTile(
-//             leading: getIconAssociatedToType("breakfast"),
-//             title: Text(data["name"],
-//                 overflow: TextOverflow.ellipsis,
-//                 style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
-//             subtitle: Text(data["cuisine"].toString().toUpperCase(),
-//                 style: new TextStyle(fontSize: 12.0),
-//                 overflow: TextOverflow.ellipsis),
-//             trailing: GestureDetector (
-//               child: Icon(Icons.location_on,
-//                 color: Colors.indigoAccent,
-//               ),
-//               onTap: () {
-//                 launch(data['maps_link']);
-//               }
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//     return customCard;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return new Scaffold(
-//         drawer: new MyDrawer(),
-//         appBar: new AppBar(
-//           title: new Text("vacation ready"),
-//           backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
-//         ),
-//         body:
-//                     !isLoaded ?
-//                        new Container(child: CircularProgressIndicator(), alignment: Alignment.center) :
-//                        new Container(
-//           padding: EdgeInsets.only(left: 80, top: 20.0),
-//           child: Column(
-//             children: <Widget>[
-//               CarouselSlider(
-//                 viewportFraction: 0.95,
-//               height: 80.0,
-//               items: breakfast_list.map((i) {
-//                 return Builder(
-//                   builder: (BuildContext context) {
-//                     return Container(
-//                       child: buildCard(i)
-//                     );
-//                   },
-//                 );
-//               }).toList(),
-//           ),
-//             CarouselSlider(
-//                 viewportFraction: 0.95,
-//               height: 80.0,
-//               items: lunch_list.map((i) {
-//                 return Builder(
-//                   builder: (BuildContext context) {
-//                     return Container(
-//                       child: buildCard(i)
-//                     );
-//                   },
-//                 );
-//               }).toList(),
-//           ),
-//            CarouselSlider(
-//                 viewportFraction: 0.95,
-//               height: 80.0,
-//               items: dinner_list.map((i) {
-//                 return Builder(
-//                   builder: (BuildContext context) {
-//                     return Container(
-//                       child: buildCard(i)
-//                     );
-//                   },
-//                 );
-//               }).toList(),
-//           ),
-//             ])
-//           ));
-//     }
-//   }
-
 import 'package:flutter/material.dart';
 import '../utilities/drawer.dart';
 import '../utilities/user_info.dart';
@@ -157,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
-// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CreateItinerary extends StatefulWidget {
   @override
@@ -176,6 +26,8 @@ class CreateItineraryState extends State<CreateItinerary> {
   Map events_data;
   var _current, attractions_list, _currentSelection;
   List selected_options = [];
+  String cardType = "";
+  ScrollController scroll_controller = ScrollController();
 
   Future<Widget> getData() async {
     http.Response response = await http.post(serverAddress + 'generate-trip',
@@ -247,7 +99,40 @@ class CreateItineraryState extends State<CreateItinerary> {
   }
 
   Card buildCard(var data) {
-    var customCard = new Card(
+    var customCard;
+    if (cardType == "food"){
+      customCard = new Card(
+        elevation: 5.0,
+        margin: EdgeInsets.all(4.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: getIconAssociatedToType("breakfast"),
+              title: Text(data["name"],
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
+              subtitle: Text(data["cuisine"].toString().toUpperCase(),
+                  style: new TextStyle(fontSize: 12.0),
+                  overflow: TextOverflow.ellipsis),
+              trailing: GestureDetector(
+                  child: Icon(
+                    Icons.location_on,
+                    color: Colors.indigoAccent,
+                  ),
+                  onTap: () {
+                    launch(data['maps_link']);
+                  }),
+            ),
+          ],
+        ),
+      );
+    }else {
+      customCard = new Card(
       elevation: 5.0,
       margin: EdgeInsets.all(4.0),
       shape: RoundedRectangleBorder(
@@ -257,12 +142,12 @@ class CreateItineraryState extends State<CreateItinerary> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            leading: getIconAssociatedToType("breakfast"),
+            leading: getIconAssociatedToType("attraction"),
             title: Text(data["name"],
                 overflow: TextOverflow.ellipsis,
                 style:
                     new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
-            subtitle: Text(data["cuisine"].toString().toUpperCase(),
+            subtitle: Text(data["type"].toString().toUpperCase(),
                 style: new TextStyle(fontSize: 12.0),
                 overflow: TextOverflow.ellipsis),
             trailing: GestureDetector(
@@ -276,7 +161,9 @@ class CreateItineraryState extends State<CreateItinerary> {
           ),
         ],
       ),
-    );
+      );
+    }
+
     return customCard;
   }
 
@@ -307,40 +194,6 @@ class CreateItineraryState extends State<CreateItinerary> {
     );
     return customCard;
   }
-
-  // Card buildEventCard(var data) {
-  //   var customCard = new Card(
-  //     elevation: 5.0,
-  //     margin: EdgeInsets.all(4.0),
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(15.0),
-  //     ),
-  //     child: new Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: <Widget>[
-  //         ListTile(
-  //           leading: getIconAssociatedToType("breakfast"),
-  //           title: Text(data["name"],
-  //               overflow: TextOverflow.ellipsis,
-  //               style:
-  //                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
-  //           subtitle: Text(data["cuisine"].toString().toUpperCase(),
-  //               style: new TextStyle(fontSize: 12.0),
-  //               overflow: TextOverflow.ellipsis),
-  //           trailing: GestureDetector(
-  //               child: Icon(
-  //                 Icons.location_on,
-  //                 color: Colors.indigoAccent,
-  //               ),
-  //               onTap: () {
-  //                 launch(data['maps_link']);
-  //               }),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //   return customCard;
-  // }
 
   void addNewEvent() {
     showModalBottomSheet(
@@ -405,6 +258,7 @@ class CreateItineraryState extends State<CreateItinerary> {
       //print(_currentSelection);
       if (data_to_card != null) {
         selected_options.add(data_to_card[_currentSelection]);
+        scroll_controller.animateTo(scroll_controller.position.maxScrollExtent, duration: Duration(seconds: 1), curve: Curves.easeIn);
       }
     });
 
@@ -413,6 +267,7 @@ class CreateItineraryState extends State<CreateItinerary> {
     }
 
     String selected = total_options[_current];
+    cardType = "food";
     setState(() {
       if (selected == "breakfast") {
         data_to_card = breakfast_list;
@@ -424,6 +279,7 @@ class CreateItineraryState extends State<CreateItinerary> {
         data_to_card = dinner_list;
         total_options.removeAt(_current);
       } else {
+        cardType = "attraction";
         data_to_card = attractions[selected];
       }
     });
@@ -444,8 +300,10 @@ class CreateItineraryState extends State<CreateItinerary> {
         floatingActionButton: !isLoaded
             ? new Container()
             : new FloatingActionButton(
+                tooltip: "Add a new event to your day",
+                elevation: 8.0,
                 child: const Icon(Icons.add),
-                backgroundColor: Color.fromRGBO(101, 202, 214, 1.0),
+                backgroundColor: Color.fromRGBO(23, 150, 174, 1.0),
                 onPressed: addNewEvent,
               ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -455,23 +313,24 @@ class CreateItineraryState extends State<CreateItinerary> {
             : !isSelected
                 ? new Container()
                 : new ListView(
+                    controller: scroll_controller,
                     children: <Widget>[
                       Padding(padding: EdgeInsets.only(top: 15)),
                       Container(
-                          padding:EdgeInsets.only(left: 60, right: 50), 
+                          padding:EdgeInsets.only(left: 70, right: 40), 
                           height: selected_options.length * 80.0, 
                           child: new ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          children: List.generate(
-                              selected_options == null
-                                  ? 0
-                                  : selected_options.length, (index) {
-                            return buildCard(selected_options[index]);
-                          }),
+                            physics: NeverScrollableScrollPhysics(),
+                            children: List.generate(
+                                selected_options == null
+                                    ? 0
+                                    : selected_options.length, (index) {
+                              return buildCard(selected_options[index]);
+                            }),
                         )),
                         Container(
                         height: 91.0,
-                        padding: EdgeInsets.only(left: 60, right: 50),
+                        padding: EdgeInsets.only(left: 65, right: 50),
                         child: new ListView(physics: NeverScrollableScrollPhysics(), children: <Widget>[
                         CarouselSlider(
                           viewportFraction: 0.95,
