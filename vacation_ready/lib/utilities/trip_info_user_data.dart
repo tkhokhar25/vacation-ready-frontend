@@ -65,15 +65,15 @@ sendCreateAccountRequest(String json) async {
 }
 
 int getNumDays(){
-  String arrival_day = arrival.split(" ")[0];
-  String departure_day = departure.split(" ")[0];
+  // String arrival_day = arrival.split(" ")[0];
+  // String departure_day = departure.split(" ")[0];
 
-  var arrival_date = DateTime.parse(arrival_day);
-  var departure_date = DateTime.parse(departure_day);
+  // var arrival_date = DateTime.parse(arrival_day);
+  // var departure_date = DateTime.parse(departure_day);
 
-  Duration difference = departure_date.difference(arrival_date);
+ // Duration difference = departure_date.difference(arrival_date);
   // print("num days = " + difference.inDays.toString());
-  return(difference.inDays);
+  return(5);
 }
 
 List getDayNames(int num_days){

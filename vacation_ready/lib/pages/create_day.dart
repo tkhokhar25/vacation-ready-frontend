@@ -71,7 +71,7 @@ class CreateDayState extends State<CreateDay> {
   }
 
   Card buildCard(var data) {
-    var type = "Breakfast";
+    var type = data["type"];
     var customCard;
     if (type == "Breakfast" || type == "Lunch" || type == "Dinner") {
       customCard = new Card(
@@ -303,10 +303,10 @@ class CreateDayState extends State<CreateDay> {
 
 
   void donePlanning(){
-    setDayofTrip(trip_id);
-    selected_options.clear();
+    // setDayofTrip(trip_id);
+    // selected_options.clear();
     //selected_options_type.clear();
-    Navigator.pushNamed(context, '/create_itinerary');
+    Navigator.pushNamed(context, '/location_detection');
   }
 
   @override
@@ -356,7 +356,7 @@ class CreateDayState extends State<CreateDay> {
                         Padding(padding: EdgeInsets.only(top: 15)),
                         Container(
                             padding: EdgeInsets.only(left: 70, right: 15),
-                            height: selected_options.length * 78.0,
+                            height: selected_options.length * 80.0,
                             child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: selected_options.length,

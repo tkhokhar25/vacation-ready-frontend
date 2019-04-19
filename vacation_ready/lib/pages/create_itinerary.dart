@@ -106,6 +106,9 @@ class CreateItineraryState extends State<CreateItinerary> {
 
   void _onTileClicked(int index) {
     index++;
+    if (isLoaded == false){
+      return;
+    }
     current_day_number = index;
     if (getDayofTrip(trip_id, index) == null){
       print("creating a new day");
