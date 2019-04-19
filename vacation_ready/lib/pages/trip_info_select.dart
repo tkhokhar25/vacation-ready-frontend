@@ -44,15 +44,15 @@ class _TripInfoSelectState extends State<TripInfoSelect> {
     }
     arrival = dateArrival.toString();
     departure = dateDeparture.toString();
-    
+
     var jsonReq = new Request(
-      sliderMealNum.toInt(),
-      sliderMealBudget.toInt(),
-      (sliderOverallBudget / (sliderNumPeople + 1)).toInt(),
-      2,
-      arrival,
-      departure,
-      place_id);
+        sliderMealNum.toInt(),
+        sliderMealBudget.toInt(),
+        (sliderOverallBudget / (sliderNumPeople + 1)).toInt(),
+        2,
+        arrival,
+        departure,
+        place_id);
     Map myMap = request_to_map(jsonReq);
     String json = request_to_JSON(myMap);
     sendCreateAccountRequest(json);
@@ -201,4 +201,3 @@ Future<Null> displayPrediction(Prediction p, ScaffoldState scaffold) async {
     place_id = detail.result.placeId;
   }
 }
-

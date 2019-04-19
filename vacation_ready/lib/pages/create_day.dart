@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import '../utilities/drawer.dart';
-import '../utilities/user_info.dart';
-import '../utilities/trip_info_user_data.dart';
-import '../utilities/attractions_user_data.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:math';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../utilities/itinerary_data.dart';
+import '../utilities/trip_info_user_data.dart';
 
 class CreateDay extends StatefulWidget {
   @override
@@ -18,69 +17,13 @@ class CreateDay extends StatefulWidget {
 class CreateDayState extends State<CreateDay> {
   String currentId, currentType;
   bool loaded = false;
-  List breakfast_list, lunch_list, dinner_list, names_of_options, data_for_carousel;
-  Map attractions;
-  bool isLoaded = false, isSelectedOption = false;
-  List<ListTile> litems = [];
+  List data_for_carousel;
+  bool isSelectedOption = false;
   List<Widget> carousels = [];
   bool is_first_carousel = true;
-  Map events_data;
-  var _currentOption, attractions_list, _currentSelection, _currentSelectionType;
+  var _currentOption, _currentSelection, _currentSelectionType;
   String selectedOption = "";
-  List selected_options = [];
-  List selected_options_type = [];
   ScrollController scroll_controller = ScrollController();
-
-  Future<Widget> getData() async {
-    http.Response response = await http.post(serverAddress + 'generate-trip',
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({"trip_id": 29, "interest_set_id": 24}));
-    print(response.statusCode);
-    this.setState(() {
-      if (response.statusCode == 400) {
-      } else {
-        isLoaded = true;
-        breakfast_list = jsonDecode(response.body)['restaurants']['breakfast'];
-        lunch_list = jsonDecode(response.body)['restaurants']['lunch'];
-        dinner_list = jsonDecode(response.body)['restaurants']['dinner'];
-        attractions = jsonDecode(response.body)['attractions'];
-        return new Container();
-      }
-    });
-  }
-
-  Future<Map> getInterestSet(var interest_set_id) async {
-    String URL = GET_INTEREST_URL;
-    String json;
-    if (interest_set_id != -1) {
-      Map interest_data = new Map();
-      interest_data["interest_set_id"] = interest_set_id;
-      json = jsonEncode(interest_data);
-    }
-
-    try {
-      http
-          .post(URL, headers: {"Content-Type": "application/json"}, body: json)
-          .then((response) {
-        events_data = jsonDecode(response.body);
-        attractions_list = events_data['result'][0]['attractions'];
-        names_of_options = attractions_list;
-        names_of_options.add("Breakfast");
-        names_of_options.add("Lunch");
-        names_of_options.add("Dinner");
-      });
-    } catch (Exception) {
-      print(Exception.toString());
-    }
-    return null;
-  }
-
-  @override
-  void initState() {
-    this.getData();
-    this.getInterestSet(24);
-    print(names_of_options);
-  }
 
   Icon getIconAssociatedToType(String type) {
     Icon iconToReturn;
@@ -127,8 +70,8 @@ class CreateDayState extends State<CreateDay> {
     return customCard;
   }
 
-
-  Card buildCard(var data, var type) {
+  Card buildCard(var data) {
+    var type = "Breakfast";
     var customCard;
     if (type == "Breakfast" || type == "Lunch" || type == "Dinner") {
       customCard = new Card(
@@ -197,7 +140,6 @@ class CreateDayState extends State<CreateDay> {
     return customCard;
   }
 
-
   void addNewEvent() {
     showModalBottomSheet(
         context: context,
@@ -254,7 +196,7 @@ class CreateDayState extends State<CreateDay> {
   void delete_card(int idx) {
     setState(() {
       selected_options.removeAt(idx);
-      selected_options_type.removeAt(idx);
+      //selected_options_type.removeAt(idx);
     });
   }
 
@@ -266,11 +208,12 @@ class CreateDayState extends State<CreateDay> {
     var optionToCheck = selected_options[selected_options.length - 1];
     var distanceMap = Map<double, int>();
 
-    for(var i = 0; i < listToSort.length; i++) {
+    for (var i = 0; i < listToSort.length; i++) {
       try {
-        var distance = pow(listToSort[i]["lat"] - optionToCheck["lat"], 2) + pow(listToSort[i]["lng"] - optionToCheck["lng"], 2);
+        var distance = pow(listToSort[i]["lat"] - optionToCheck["lat"], 2) +
+            pow(listToSort[i]["lng"] - optionToCheck["lng"], 2);
         distanceMap[distance] = i;
-      } catch(e) {
+      } catch (e) {
         distanceMap[100.0] = i;
       }
     }
@@ -293,7 +236,7 @@ class CreateDayState extends State<CreateDay> {
     }
     setState(() {
       isSelectedOption = true;
-      
+
       // First time, data_to_card will be null since it has not be set. Adds to final list
       if (data_for_carousel != null) {
         selected_options.add(data_for_carousel[_currentSelection]);
@@ -311,21 +254,59 @@ class CreateDayState extends State<CreateDay> {
       selected_options_type.add(selectedOption);
       if (selectedOption == "Breakfast") {
         data_for_carousel = findClosest(breakfast_list);
-        names_of_options.removeAt(_currentOption);
+        //names_of_options.removeAt(_currentOption);
       } else if (selectedOption == "Lunch") {
         data_for_carousel = findClosest(lunch_list);
-        names_of_options.removeAt(_currentOption);
+        //names_of_options.removeAt(_currentOption);
       } else if (selectedOption == "Dinner") {
         data_for_carousel = findClosest(dinner_list);
-        names_of_options.removeAt(_currentOption);
+        //names_of_options.removeAt(_currentOption);
       } else {
         data_for_carousel = findClosest(attractions[selectedOption]);
       }
     });
-    print(data_for_carousel);
-    print(isSelectedOption);
 
     _currentOption = 0;
+  }
+
+  Future<Map> setDayofTrip(var trip_id) async {
+    String URL = SET_TRIP_DAY_URL;
+    String json;
+    Map day_data;
+    if (trip_id != -1) {
+      Map set_trip_day_data = new Map();
+      set_trip_day_data["trip_id"] = trip_id;
+      set_trip_day_data["day_num"] = current_day_number;
+      set_trip_day_data["day_details"] = selected_options;
+      json = jsonEncode(set_trip_day_data);
+      print(json);
+    }
+
+    try {
+      http
+          .post(URL, headers: {"Content-Type": "application/json"}, body: json)
+          .then((response) {
+        day_data = jsonDecode(response.body);
+        if (day_data["STATUS"] == "SUCCESS"){
+          print("successsssss");
+          return day_data;
+        
+        }else {
+          return null;
+        }
+      });
+    } catch (Exception) {
+      print(Exception.toString());
+    }
+    return null;
+  }
+
+
+  void donePlanning(){
+    setDayofTrip(trip_id);
+    selected_options.clear();
+    //selected_options_type.clear();
+    Navigator.pushNamed(context, '/create_itinerary');
   }
 
   @override
@@ -338,12 +319,30 @@ class CreateDayState extends State<CreateDay> {
         ),
         floatingActionButton: !isLoaded
             ? new Container()
-            : new FloatingActionButton(
-                tooltip: "Add a new event to your day",
-                elevation: 8.0,
-                child: const Icon(Icons.add),
-                backgroundColor: Color.fromRGBO(23, 150, 174, 1.0),
-                onPressed: addNewEvent,
+            : new Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  new FloatingActionButton(
+                    heroTag: null,
+                    tooltip: "Add a new event to your day",
+                    elevation: 8.0,
+                    child: const Icon(Icons.add),
+                    backgroundColor: Color.fromRGBO(23, 150, 174, 0.6),
+                    onPressed: addNewEvent,
+                  ),
+
+                  new Padding(padding: EdgeInsets.only(top: 15),),
+
+                  new FloatingActionButton(
+                    heroTag: null,
+                    tooltip: "Finish Planning for the day",
+                    elevation: 8.0,
+                    child: const Icon(Icons.done),
+                    backgroundColor: Color.fromRGBO(23, 150, 174, 0.6),
+                    onPressed: donePlanning,
+                  )
+                ],
               ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: !isLoaded
@@ -366,7 +365,8 @@ class CreateDayState extends State<CreateDay> {
                                       child: Row(children: <Widget>[
                                     Expanded(
                                         child: buildCard(
-                                            selected_options[index], selected_options_type[index])),
+                                            selected_options[index],
+                                            /*selected_options_type[index]*/)),
                                     Container(
                                         padding: EdgeInsets.only(left: 10),
                                         height: 28,
@@ -398,7 +398,6 @@ class CreateDayState extends State<CreateDay> {
                                     onPageChanged: (index) {
                                       setState(() {
                                         _currentSelection = index;
-
                                       });
                                     },
                                     height: 80.0,
@@ -406,7 +405,8 @@ class CreateDayState extends State<CreateDay> {
                                       return Builder(
                                         builder: (BuildContext context) {
                                           return Container(
-                                              child: buildCard(i, selectedOption));
+                                              child:
+                                                  buildCard(i));
                                         },
                                       );
                                     }).toList(),
@@ -415,4 +415,3 @@ class CreateDayState extends State<CreateDay> {
                       ]));
   }
 }
-

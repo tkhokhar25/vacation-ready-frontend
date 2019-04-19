@@ -6,6 +6,7 @@ import './pages/initial_set.dart';
 import './pages/trip_info_select.dart';
 import './pages/select_interest_set.dart';
 import './pages/create_day.dart';
+import './pages/create_itinerary.dart';
 
 // Main controller to run 4ceed_app
 void main() {
@@ -29,7 +30,8 @@ class App extends StatelessWidget {
         '/create_initial_set': (BuildContext context) => new InitialSetInterest(),
         '/trip_info_select': (BuildContext context) => new TripInfoSelect(),
         '/select_interest_set': (BuildContext context) => new SelectInterestSet(),
-        '/create_itinerary': (BuildContext context) => new CreateDay()
+        '/create_itinerary': (BuildContext context) => new CreateItinerary(),
+        '/create_day': (BuildContext context) => new CreateDay()
       }
     );
   }

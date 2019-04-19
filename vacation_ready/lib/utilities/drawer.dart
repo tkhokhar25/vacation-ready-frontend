@@ -19,7 +19,7 @@ class MyDrawer extends StatelessWidget {
               new ListTile(
                 title: new Text("Plan"),
                 trailing: new Icon(Icons.grid_on),
-                onTap: () => Navigator.of(context).pushNamed('/home')
+                onTap: () => Navigator.of(context).pushNamed('/select_interest_set')
               ),
               new Divider(),
               
