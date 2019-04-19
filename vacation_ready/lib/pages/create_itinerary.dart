@@ -98,9 +98,9 @@ class CreateItineraryState extends State<CreateItinerary> {
     return iconToReturn;
   }
 
-  Card buildCard(var data) {
+  Card buildCard(var data, int index, int whocalled) {
     var customCard;
-    if (cardType == "food"){
+    if (cardType == "food") {
       customCard = new Card(
         elevation: 5.0,
         margin: EdgeInsets.all(4.0),
@@ -114,8 +114,8 @@ class CreateItineraryState extends State<CreateItinerary> {
               leading: getIconAssociatedToType("breakfast"),
               title: Text(data["name"],
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 12.0)),
               subtitle: Text(data["cuisine"].toString().toUpperCase(),
                   style: new TextStyle(fontSize: 12.0),
                   overflow: TextOverflow.ellipsis),
@@ -131,36 +131,36 @@ class CreateItineraryState extends State<CreateItinerary> {
           ],
         ),
       );
-    }else {
+    } else {
       customCard = new Card(
-      elevation: 5.0,
-      margin: EdgeInsets.all(4.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: getIconAssociatedToType("attraction"),
-            title: Text(data["name"],
-                overflow: TextOverflow.ellipsis,
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0)),
-            subtitle: Text(data["type"].toString().toUpperCase(),
-                style: new TextStyle(fontSize: 12.0),
-                overflow: TextOverflow.ellipsis),
-            trailing: GestureDetector(
-                child: Icon(
-                  Icons.location_on,
-                  color: Colors.indigoAccent,
-                ),
-                onTap: () {
-                  launch(data['maps_link']);
-                }),
-          ),
-        ],
-      ),
+        elevation: 5.0,
+        margin: EdgeInsets.all(2.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: getIconAssociatedToType("attraction"),
+              title: Text(data["name"],
+                  overflow: TextOverflow.ellipsis,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 11.0)),
+              subtitle: Text(data["type"].toString().toUpperCase(),
+                  style: new TextStyle(fontSize: 10.0),
+                  overflow: TextOverflow.ellipsis),
+              trailing: GestureDetector(
+                  child: Icon(
+                    Icons.location_on,
+                    color: Colors.indigoAccent,
+                  ),
+                  onTap: () {
+                    launch(data['maps_link']);
+                  }),
+            ),
+          ],
+        ),
       );
     }
 
@@ -185,9 +185,9 @@ class CreateItineraryState extends State<CreateItinerary> {
               title: Text(type,
                   overflow: TextOverflow.ellipsis,
                   style: new TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 12.0)),
+                      fontWeight: FontWeight.bold, fontSize: 11.0)),
               subtitle: Text(typeEvent,
-                  style: new TextStyle(fontSize: 12.0),
+                  style: new TextStyle(fontSize: 10.0),
                   overflow: TextOverflow.ellipsis)),
         ],
       ),
@@ -248,6 +248,12 @@ class CreateItineraryState extends State<CreateItinerary> {
         });
   }
 
+  void delete_card(int idx) {
+    setState(() {
+      selected_options.removeAt(idx);
+    });
+  }
+
   void confirmNewEvent() {
     Navigator.pop(context);
     if (_currentSelection == null) {
@@ -258,7 +264,8 @@ class CreateItineraryState extends State<CreateItinerary> {
       //print(_currentSelection);
       if (data_to_card != null) {
         selected_options.add(data_to_card[_currentSelection]);
-        scroll_controller.animateTo(scroll_controller.position.maxScrollExtent, duration: Duration(seconds: 1), curve: Curves.easeIn);
+        scroll_controller.animateTo(scroll_controller.position.maxScrollExtent,
+            duration: Duration(seconds: 1), curve: Curves.easeIn);
       }
     });
 
@@ -315,39 +322,90 @@ class CreateItineraryState extends State<CreateItinerary> {
                 : new ListView(
                     controller: scroll_controller,
                     children: <Widget>[
-                      Padding(padding: EdgeInsets.only(top: 15)),
-                      Container(
-                          padding:EdgeInsets.only(left: 70, right: 40), 
-                          height: selected_options.length * 80.0, 
-                          child: new ListView(
-                            physics: NeverScrollableScrollPhysics(),
-                            children: List.generate(
-                                selected_options == null
-                                    ? 0
-                                    : selected_options.length, (index) {
-                              return buildCard(selected_options[index]);
-                            }),
-                        )),
+                        Padding(padding: EdgeInsets.only(top: 15)),
                         Container(
-                        height: 91.0,
-                        padding: EdgeInsets.only(left: 65, right: 50),
-                        child: new ListView(physics: NeverScrollableScrollPhysics(), children: <Widget>[
-                        CarouselSlider(
-                          viewportFraction: 0.95,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentSelection = index;
-                            });
-                          },
-                          height: 80.0,
-                          items: data_to_card.map((i) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(child: buildCard(i));
-                              },
-                            );
-                          }).toList(),
-                        )])),
-                    ]));
+                            padding: EdgeInsets.only(left: 70, right: 15),
+                            height: selected_options.length * 78.0,
+                            child: ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: selected_options.length,
+                                itemBuilder: (BuildContext ctxt, int index) {
+                                  return new Container(
+                                      child: Row(children: <Widget>[
+                                    Expanded(
+                                        child: buildCard(
+                                            selected_options[index], index, 0)),
+                                    Container(
+                                        padding: EdgeInsets.only(left: 10),
+                                        height: 28,
+                                        width: 35,
+                                        key: Key(index.toString()),
+                                        child: new RaisedButton(
+                                          disabledColor: Colors.white,
+                                          color: Colors.white,
+                                          elevation: 0,
+                                          padding: EdgeInsets.only(
+                                              left: 0, right: 5),
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 28,
+                                          ),
+                                          onPressed: () => delete_card(index),
+                                        ))
+                                  ]));
+                                })),
+                        Container(
+                            height: 91.0,
+                            padding: EdgeInsets.only(left: 80, right: 50),
+                            child: new ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                                  CarouselSlider(
+                                    viewportFraction: 0.95,
+                                    onPageChanged: (index) {
+                                      setState(() {
+                                        _currentSelection = index;
+                                      });
+                                    },
+                                    height: 80.0,
+                                    items: data_to_card.map((i) {
+                                      return Builder(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                              child: buildCard(i, 0, 1));
+                                        },
+                                      );
+                                    }).toList(),
+                                  )
+                                ])),
+                      ]));
   }
 }
+
+// new ListView(
+//                             physics: NeverScrollableScrollPhysics(),
+//                             children: List.generate(
+//                                 selected_options == null
+//                                     ? 0
+//                                     : selected_options.length, (index) {
+//                                 return new Container(child:Row (children: <Widget> [
+//                                   Expanded(
+//                                     child: buildCard(selected_options[index], index, 0)
+//                                   ),
+//                                   Container(
+//                                     padding: EdgeInsets.only(left: 10),
+//                                     height: 28,
+//                                     width: 35,
+//                                     key: Key(index.toString()),
+//                                     child:new RaisedButton(
+//                                       disabledColor: Colors.white,
+//                                       color: Colors.white,
+//                                       elevation: 0,
+//                                       padding: EdgeInsets.only(left: 0 ,right:5),
+//                                       child: Icon(Icons.delete, color: Colors.red, size: 28,),
+//                                       onPressed: () => delete_card(index),
+//                                   ))
+//                               ]));
+//                             }),
+//                         )
