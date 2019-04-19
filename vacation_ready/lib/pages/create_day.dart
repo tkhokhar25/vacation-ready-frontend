@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:math';
 
 class CreateDay extends StatefulWidget {
   @override
@@ -257,6 +258,33 @@ class CreateDayState extends State<CreateDay> {
     });
   }
 
+  findClosest(listToSort) {
+    if (selected_options.length == 0) {
+      return listToSort;
+    }
+
+    var optionToCheck = selected_options[selected_options.length - 1];
+    var distanceMap = Map<double, int>();
+
+    for(var i = 0; i < listToSort.length; i++) {
+      try {
+        var distance = pow(listToSort[i]["lat"] - optionToCheck["lat"], 2) + pow(listToSort[i]["lng"] - optionToCheck["lng"], 2);
+        distanceMap[distance] = i;
+      } catch(e) {
+        distanceMap[100.0] = i;
+      }
+    }
+
+    var sortedKeys = distanceMap.keys.toList()..sort();
+    List listToReturn = List();
+
+    for (var i = 0; i < sortedKeys.length; i++) {
+      listToReturn.add(listToSort[distanceMap[sortedKeys[i]]]);
+    }
+
+    return listToReturn;
+  }
+
   void confirmNewEvent() {
     Navigator.pop(context);
 
@@ -282,16 +310,16 @@ class CreateDayState extends State<CreateDay> {
       selectedOption = names_of_options[_currentOption];
       selected_options_type.add(selectedOption);
       if (selectedOption == "Breakfast") {
-        data_for_carousel = breakfast_list;
+        data_for_carousel = findClosest(breakfast_list);
         names_of_options.removeAt(_currentOption);
       } else if (selectedOption == "Lunch") {
-        data_for_carousel = lunch_list;
+        data_for_carousel = findClosest(lunch_list);
         names_of_options.removeAt(_currentOption);
       } else if (selectedOption == "Dinner") {
-        data_for_carousel = dinner_list;
+        data_for_carousel = findClosest(dinner_list);
         names_of_options.removeAt(_currentOption);
       } else {
-        data_for_carousel = attractions[selectedOption];
+        data_for_carousel = findClosest(attractions[selectedOption]);
       }
     });
     print(data_for_carousel);
