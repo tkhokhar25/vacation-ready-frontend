@@ -17,16 +17,17 @@ class CreateItinerary extends StatefulWidget {
 class CreateItineraryState extends State<CreateItinerary> {
   String currentId, currentType;
   bool loaded = false;
-  List breakfast_list, lunch_list, dinner_list, total_options, data_to_card;
+  List breakfast_list, lunch_list, dinner_list, names_of_options, data_for_carousel;
   Map attractions;
-  bool isLoaded = false, isSelected = false;
+  bool isLoaded = false, isSelectedOption = false;
   List<ListTile> litems = [];
   List<Widget> carousels = [];
   bool is_first_carousel = true;
   Map events_data;
-  var _current, attractions_list, _currentSelection;
+  var _currentOption, attractions_list, _currentSelection, _currentSelectionType;
+  String selectedOption = "";
   List selected_options = [];
-  String cardType = "";
+  List selected_options_type = [];
   ScrollController scroll_controller = ScrollController();
 
   Future<Widget> getData() async {
@@ -62,10 +63,10 @@ class CreateItineraryState extends State<CreateItinerary> {
           .then((response) {
         events_data = jsonDecode(response.body);
         attractions_list = events_data['result'][0]['attractions'];
-        total_options = attractions_list;
-        total_options.add("breakfast");
-        total_options.add("lunch");
-        total_options.add("dinner");
+        names_of_options = attractions_list;
+        names_of_options.add("Breakfast");
+        names_of_options.add("Lunch");
+        names_of_options.add("Dinner");
       });
     } catch (Exception) {
       print(Exception.toString());
@@ -77,12 +78,11 @@ class CreateItineraryState extends State<CreateItinerary> {
   void initState() {
     this.getData();
     this.getInterestSet(24);
-    print(total_options);
+    print(names_of_options);
   }
 
   Icon getIconAssociatedToType(String type) {
     Icon iconToReturn;
-
     if (type == "breakfast" || type == "lunch" || type == "dinner") {
       iconToReturn = Icon(
         Icons.fastfood,
@@ -98,9 +98,38 @@ class CreateItineraryState extends State<CreateItinerary> {
     return iconToReturn;
   }
 
-  Card buildCard(var data, int index, int whocalled) {
+  Card buildOptionsCard(var type) {
+    var typeEvent = "Attraction";
+    if (type == "Breakfast" || type == "Lunch" || type == "Dinner") {
+      typeEvent = "Food";
+    }
+    var customCard = new Card(
+      elevation: 5.0,
+      margin: EdgeInsets.all(4.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: new Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+              title: Text(type,
+                  overflow: TextOverflow.ellipsis,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 11.0)),
+              subtitle: Text(typeEvent,
+                  style: new TextStyle(fontSize: 10.0),
+                  overflow: TextOverflow.ellipsis)),
+        ],
+      ),
+    );
+    return customCard;
+  }
+
+
+  Card buildCard(var data, var type) {
     var customCard;
-    if (cardType == "food") {
+    if (type == "Breakfast" || type == "Lunch" || type == "Dinner") {
       customCard = new Card(
         elevation: 5.0,
         margin: EdgeInsets.all(4.0),
@@ -142,12 +171,12 @@ class CreateItineraryState extends State<CreateItinerary> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: getIconAssociatedToType("attraction"),
+              leading: getIconAssociatedToType("Attraction"),
               title: Text(data["name"],
                   overflow: TextOverflow.ellipsis,
                   style: new TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 11.0)),
-              subtitle: Text(data["type"].toString().toUpperCase(),
+              subtitle: Text(type.toString().toUpperCase(),
                   style: new TextStyle(fontSize: 10.0),
                   overflow: TextOverflow.ellipsis),
               trailing: GestureDetector(
@@ -167,33 +196,6 @@ class CreateItineraryState extends State<CreateItinerary> {
     return customCard;
   }
 
-  Card buildOptionsCard(var type) {
-    var typeEvent = "attraction";
-    if (type == "breakfast" || type == "lunch" || type == "dinner") {
-      typeEvent = "food";
-    }
-    var customCard = new Card(
-      elevation: 5.0,
-      margin: EdgeInsets.all(4.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-              title: Text(type,
-                  overflow: TextOverflow.ellipsis,
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 11.0)),
-              subtitle: Text(typeEvent,
-                  style: new TextStyle(fontSize: 10.0),
-                  overflow: TextOverflow.ellipsis)),
-        ],
-      ),
-    );
-    return customCard;
-  }
 
   void addNewEvent() {
     showModalBottomSheet(
@@ -211,7 +213,7 @@ class CreateItineraryState extends State<CreateItinerary> {
                           CarouselSlider(
                               viewportFraction: 0.95,
                               height: 100.0,
-                              items: total_options.map((i) {
+                              items: names_of_options.map((i) {
                                 return Builder(
                                   builder: (BuildContext context) {
                                     return Container(
@@ -221,7 +223,7 @@ class CreateItineraryState extends State<CreateItinerary> {
                               }).toList(),
                               onPageChanged: (index) {
                                 setState(() {
-                                  _current = index;
+                                  _currentOption = index;
                                 });
                               }),
                         ])),
@@ -251,49 +253,51 @@ class CreateItineraryState extends State<CreateItinerary> {
   void delete_card(int idx) {
     setState(() {
       selected_options.removeAt(idx);
+      selected_options_type.removeAt(idx);
     });
   }
 
   void confirmNewEvent() {
     Navigator.pop(context);
+
     if (_currentSelection == null) {
       _currentSelection = 0;
     }
     setState(() {
-      isSelected = true;
-      //print(_currentSelection);
-      if (data_to_card != null) {
-        selected_options.add(data_to_card[_currentSelection]);
+      isSelectedOption = true;
+      // First time, data_to_card will be null since it has not be set. Adds to final list
+      if (data_for_carousel != null) {
+        selected_options.add(data_for_carousel[_currentSelection]);
         scroll_controller.animateTo(scroll_controller.position.maxScrollExtent,
             duration: Duration(seconds: 1), curve: Curves.easeIn);
       }
     });
 
-    if (_current == null) {
-      _current = 0;
+    if (_currentOption == null) {
+      _currentOption = 0;
     }
 
-    String selected = total_options[_current];
-    cardType = "food";
+    
     setState(() {
-      if (selected == "breakfast") {
-        data_to_card = breakfast_list;
-        total_options.removeAt(_current);
-      } else if (selected == "lunch") {
-        data_to_card = lunch_list;
-        total_options.removeAt(_current);
-      } else if (selected == "dinner") {
-        data_to_card = dinner_list;
-        total_options.removeAt(_current);
+      selectedOption = names_of_options[_currentOption];
+      selected_options_type.add(selectedOption);
+      if (selectedOption == "Breakfast") {
+        data_for_carousel = breakfast_list;
+        names_of_options.removeAt(_currentOption);
+      } else if (selectedOption == "Lunch") {
+        data_for_carousel = lunch_list;
+        names_of_options.removeAt(_currentOption);
+      } else if (selectedOption == "Dinner") {
+        data_for_carousel = dinner_list;
+        names_of_options.removeAt(_currentOption);
       } else {
-        cardType = "attraction";
-        data_to_card = attractions[selected];
+        data_for_carousel = attractions[selectedOption];
       }
     });
-    print(data_to_card);
-    print(isSelected);
+    print(data_for_carousel);
+    print(isSelectedOption);
 
-    _current = 0;
+    _currentOption = 0;
   }
 
   @override
@@ -317,7 +321,7 @@ class CreateItineraryState extends State<CreateItinerary> {
         body: !isLoaded
             ? new Container(
                 child: CircularProgressIndicator(), alignment: Alignment.center)
-            : !isSelected
+            : !isSelectedOption
                 ? new Container()
                 : new ListView(
                     controller: scroll_controller,
@@ -334,7 +338,7 @@ class CreateItineraryState extends State<CreateItinerary> {
                                       child: Row(children: <Widget>[
                                     Expanded(
                                         child: buildCard(
-                                            selected_options[index], index, 0)),
+                                            selected_options[index], selected_options_type[index])),
                                     Container(
                                         padding: EdgeInsets.only(left: 10),
                                         height: 28,
@@ -366,14 +370,15 @@ class CreateItineraryState extends State<CreateItinerary> {
                                     onPageChanged: (index) {
                                       setState(() {
                                         _currentSelection = index;
+
                                       });
                                     },
                                     height: 80.0,
-                                    items: data_to_card.map((i) {
+                                    items: data_for_carousel.map((i) {
                                       return Builder(
                                         builder: (BuildContext context) {
                                           return Container(
-                                              child: buildCard(i, 0, 1));
+                                              child: buildCard(i, selectedOption));
                                         },
                                       );
                                     }).toList(),

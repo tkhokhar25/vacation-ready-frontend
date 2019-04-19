@@ -243,17 +243,17 @@ class AttractionsInterestState extends State<AttractionsInterest> {
     Photo(
       assetName: 'themeparks.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Theme Parks',
+      title: 'Theme Park',
     ),
     Photo(
       assetName: 'monuments.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Monuments',
+      title: 'Monument',
     ),
     Photo(
       assetName: 'landmarks.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Landmarks',
+      title: 'Landmark',
     ),
     Photo(
       assetName: 'culture.jpg',
@@ -263,7 +263,7 @@ class AttractionsInterestState extends State<AttractionsInterest> {
     Photo(
       assetName: 'museums.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Museums',
+      title: 'Museum',
     ),
     Photo(
       assetName: 'wildlife.jpeg',
@@ -278,7 +278,7 @@ class AttractionsInterestState extends State<AttractionsInterest> {
     Photo(
       assetName: 'wellness.jpg',
       assetPackage: _kGalleryAssetsPackage,
-      title: 'Wellnes',
+      title: 'Wellness',
     ),
     Photo(
       assetName: 'nightlife.jpg',
