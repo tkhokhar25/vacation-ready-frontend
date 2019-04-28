@@ -43,9 +43,11 @@ class _GetLocationPageState extends State<GetLocationPage> {
       context: context,
       builder: (_) {
         return new AlertDialog(
-          title: Text("Choose Action"),
+          title: Text("Did you enjoy your visit?"),
           content: new Container(
-           child: Column(children: <Widget>[new RaisedButton(disabledColor: Colors.white,
+            height: 130,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)),
+           child: new Column(children: <Widget>[new RaisedButton(disabledColor: Colors.white,
                                           color: Colors.white,
                                           elevation: 0,
                                           padding: EdgeInsets.only(
@@ -73,7 +75,7 @@ class _GetLocationPageState extends State<GetLocationPage> {
             
           ),
         );
-      },
+        },
     );
   }
 

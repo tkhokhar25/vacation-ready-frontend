@@ -63,7 +63,9 @@ class _CreateTripBodyState extends State<CreateTripBody> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: GestureDetector(
-                  onTap: () { },//TODO: change route
+                  onTap: () { 
+                    Navigator.pushNamed(context, '/search-similar_trip');
+                  },//TODO: change route
                   child: new Column(children: <Widget>[
                   new Padding(padding: EdgeInsets.only(top: 20.0)),
                   new Container(
@@ -78,7 +80,7 @@ class _CreateTripBodyState extends State<CreateTripBody> {
                       )),
                   new ListTile(
                     leading: Icon(Icons.arrow_back),
-                    title: Text('Look at your Planned Trips'),
+                    title: Text('Find Top places for your Destination'),
                     subtitle: Text('Resume from where you stopped'),
                   )
                 ]))),

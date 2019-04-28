@@ -73,7 +73,7 @@ class CreateDayState extends State<CreateDay> {
   Card buildCard(var data) {
     var type = data["type"];
     var customCard;
-    if (type == "Breakfast" || type == "Lunch" || type == "Dinner") {
+    if (type == "breakfast" || type == "lunch" || type == "dinner") {
       customCard = new Card(
         elevation: 5.0,
         margin: EdgeInsets.all(4.0),
@@ -355,7 +355,7 @@ class CreateDayState extends State<CreateDay> {
                     children: <Widget>[
                         Padding(padding: EdgeInsets.only(top: 15)),
                         Container(
-                            padding: EdgeInsets.only(left: 70, right: 15),
+                            padding: EdgeInsets.only(left: 15, right: 15),
                             height: selected_options.length * 80.0,
                             child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
@@ -389,7 +389,7 @@ class CreateDayState extends State<CreateDay> {
                                 })),
                         Container(
                             height: 91.0,
-                            padding: EdgeInsets.only(left: 80, right: 50),
+                            padding: EdgeInsets.only(left: 50, right: 50),
                             child: new ListView(
                                 physics: NeverScrollableScrollPhysics(),
                                 children: <Widget>[

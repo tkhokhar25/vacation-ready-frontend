@@ -8,7 +8,7 @@ import './pages/select_interest_set.dart';
 import './pages/create_day.dart';
 import './pages/create_itinerary.dart';
 import './utilities/location_service.dart';
-
+import './pages/search_trip.dart';
 
 // Main controller to run 4ceed_app
 void main() {
@@ -34,7 +34,8 @@ class App extends StatelessWidget {
         '/select_interest_set': (BuildContext context) => new SelectInterestSet(),
         '/create_itinerary': (BuildContext context) => new CreateItinerary(),
         '/create_day': (BuildContext context) => new CreateDay(),
-        '/location_detection': (BuildContext context) => new GetLocationPage()
+        '/location_detection': (BuildContext context) => new GetLocationPage(),
+        '/search-similar_trip': (BuildContext context) => new SearchSimilarTrip()
       }
     );
   }

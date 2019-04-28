@@ -74,7 +74,9 @@ class _SelectInterestSetBodyState extends State<SelectInterestSetBody> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: GestureDetector(
-                    onTap: () {}, //TODO: change route
+                    onTap: () {
+                      Navigator.pushNamed(context, '/search-similar_trip');
+                    },
                     child: new Column(children: <Widget>[
                       new Padding(padding: EdgeInsets.only(top: 20.0)),
                       new Container(
